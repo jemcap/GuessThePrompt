@@ -3,6 +3,7 @@ import { useNavigate, Link } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
+import { useAuth } from "../../contexts/AuthContext";
 
 // Define Zod schema for form validation - matches backend Joi schema
 const registerSchema = z.object({
@@ -32,6 +33,7 @@ type RegisterFormData = z.infer<typeof registerSchema>;
 
 const Register = () => {
   const navigate = useNavigate();
+  const { register: registerUser } = useAuth();
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   
@@ -48,25 +50,7 @@ const Register = () => {
     setLoading(true);
 
     try {
-      const response = await fetch("http://localhost:3001/api/v1/auth/register", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          username: data.username,
-          email: data.email,
-          password: data.password,
-        }),
-      });
-
-      const responseData = await response.json();
-
-      if (!response.ok) {
-        throw new Error(responseData.message || "Registration failed");
-      }
-
-      localStorage.setItem("token", responseData.token);
+      await registerUser(data.username, data.email, data.password);
       navigate("/play");
     } catch (err) {
       setError(err instanceof Error ? err.message : "An error occurred");

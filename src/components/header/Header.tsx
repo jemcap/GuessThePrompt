@@ -1,9 +1,15 @@
-import { Link, useLocation } from "react-router-dom";
+import { useState } from "react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { useAuth } from "../../contexts/AuthContext";
 import Stats from "./Stats";
 
 function Header() {
   const location = useLocation();
   const isGamePage = location.pathname === "/play";
+  const { user, logout } = useAuth();
+  const navigate = useNavigate();
+
+  const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>(false);
 
   return (
     <>
@@ -18,7 +24,80 @@ function Header() {
           </div>
 
           <div className="flex items-center gap-4">
+            {user ? (
+              <div className="relative">
+                <button
+                  onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                  className="text-gray-600 hover:text-gray-900 font-medium transition-colors flex items-center gap-1"
+                >
+                  {user.username}
+                  <svg
+                    className="w-4 h-4"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M19 9l-7 7-7-7"
+                    />
+                  </svg>
+                </button>
 
+                {isDropdownOpen && (
+                  <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg border border-gray-200 z-10">
+                    <div className="py-1">
+                      <Link
+                        to="/profile"
+                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                        onClick={() => setIsDropdownOpen(false)}
+                      >
+                        Profile
+                      </Link>
+                      <Link
+                        to="/settings"
+                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                        onClick={() => setIsDropdownOpen(false)}
+                      >
+                        Settings
+                      </Link>
+                      <button
+                        onClick={() => {
+                          logout();
+                          setIsDropdownOpen(false);
+                          navigate("/");
+                        }}
+                        className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                      >
+                        Logout
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
+            ) : (
+              <>
+                <Link to="/login">
+                  <button className="text-gray-600 hover:text-gray-900 font-medium transition-colors">
+                    Login
+                  </button>
+                </Link>
+                <Link to="/register">
+                  <button className="px-4 py-2 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors">
+                    Register
+                  </button>
+                </Link>
+              </>
+            )}
+            {/* {user && (
+              <Link to="/profile">
+                <span className="text-gray-600 hover:text-gray-900 font-medium transition-colors">
+                  {user.username}
+                </span>
+              </Link>
+            )}
             <Link to="/login">
               <button className="text-gray-600 hover:text-gray-900 font-medium transition-colors">
                 Login
@@ -28,7 +107,7 @@ function Header() {
               <button className="px-4 py-2 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors">
                 Register
               </button>
-            </Link>
+            </Link> */}
           </div>
         </div>
       </header>

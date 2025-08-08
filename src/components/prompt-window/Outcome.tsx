@@ -1,10 +1,8 @@
-import React from "react";
 import type { OutcomeProps } from "../../types/OutcomeProps";
 
 const Outcome = ({
   outcome,
   outcomeType,
-  difficulty,
   isLoading,
 }: OutcomeProps) => {
   if (isLoading) {

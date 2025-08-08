@@ -1,6 +1,7 @@
 import { useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate, Link, useLocation } from "react-router-dom";
 import { useForm } from "react-hook-form";
+import { useAuth } from "../../contexts/AuthContext";
 
 type LoginFormData = {
   email: string;
@@ -10,8 +11,13 @@ type LoginFormData = {
 
 const Login = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+  const { login } = useAuth();
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  
+  // Get the page user was trying to access before being redirected to login
+  const from = location.state?.from?.pathname || "/play";
   
   const {
     register,
@@ -24,28 +30,9 @@ const Login = () => {
     setLoading(true);
 
     try {
-      const response = await fetch("http://localhost:3001/api/v1/auth/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          email: data.email,
-          password: data.password,
-        }),
-      });
-
-      const responseData = await response.json();
-
-      if (!response.ok) {
-        throw new Error(responseData.message || "Login failed");
-      }
-
-      localStorage.setItem("token", responseData.token);
-      if (data.rememberMe) {
-        localStorage.setItem("rememberMe", "true");
-      }
-      navigate("/play");
+      await login(data.email, data.password);
+      // Navigate to the page they were trying to access, or /play by default
+      navigate(from, { replace: true });
     } catch (err) {
       setError(err instanceof Error ? err.message : "An error occurred");
     } finally {
