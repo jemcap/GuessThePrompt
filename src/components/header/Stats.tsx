@@ -14,7 +14,6 @@ function Stats({ level = 1, score = 0, streak = 0 }: StatsProps) {
       <div className="flex items-center gap-2">
         <span className="text-gray-500">Streak</span>
         <span className="font-semibold text-gray-900">{streak}</span>
-        {streak > 0 && <span className="text-orange-500">🔥</span>}
       </div>
     </div>
   );
