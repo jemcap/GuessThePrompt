@@ -36,7 +36,7 @@ const LandingPage = () => {
           </p>
           <div className="flex gap-4 justify-center">
             <button
-              onClick={() => navigate("/play")}
+              onClick={() => navigate("/daily")}
               className="px-8 py-3 bg-blue-600 
      text-white font-semibold rounded-lg hover:bg-blue-700 
      transition-colors"

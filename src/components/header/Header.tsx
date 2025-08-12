@@ -1,11 +1,8 @@
 import { useState } from "react";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
-import Stats from "./Stats";
 
 function Header() {
-  const location = useLocation();
-  const isGamePage = location.pathname === "/play";
   const { user, logout } = useAuth();
   const navigate = useNavigate();
 
@@ -24,6 +21,16 @@ function Header() {
           </div>
 
           <div className="flex items-center gap-4">
+            {user && (
+              <div className="flex items-center gap-4 mr-6">
+                <Link 
+                  to="/daily"
+                  className="text-gray-600 hover:text-blue-600 font-medium transition-colors flex items-center gap-1"
+                >
+                  Daily Challenge
+                </Link>
+              </div>
+            )}
             {user ? (
               <div className="relative">
                 <button
@@ -111,11 +118,7 @@ function Header() {
           </div>
         </div>
       </header>
-      {isGamePage && (
-        <section className="flex w-full justify-end items-center px-6 py-4 bg-white shadow-sm">
-          <Stats />
-        </section>
-      )}
+
     </>
   );
 }
