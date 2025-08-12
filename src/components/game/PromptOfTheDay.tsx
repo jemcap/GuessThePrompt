@@ -222,37 +222,10 @@ export default useLocalStorage;`,
   return (
     <div className="bg-gray-50 px-6 py-8">
       <div className="max-w-7xl mx-auto space-y-6">
-        {/* Header */}
-        <div className="bg-white rounded-lg p-6 shadow-sm border">
-          <div className="text-center">
-            <h1 className="text-2xl font-bold text-gray-900 mb-2">
-              Prompt of the Day
-            </h1>
-            <p className="text-gray-600">
-              {new Date().toLocaleDateString("en-US", {
-                weekday: "long",
-                year: "numeric",
-                month: "long",
-                day: "numeric",
-              })}
-            </p>
-            {hasSubmitted && submission && submission.score !== undefined && (
-              <div className={`mt-4 p-3 rounded-lg border ${getScoreMessage(submission.score).bgColor} ${getScoreMessage(submission.score).borderColor}`}>
-                <div className="flex items-center justify-center gap-3">
-                  <span className={`font-medium ${getScoreMessage(submission.score).color}`}>
-                    {getScoreMessage(submission.score).title} You scored {submission.score}/100
-                  </span>
-                </div>
-                <p className={`text-sm mt-1 text-center ${getScoreMessage(submission.score).color.replace('800', '600')}`}>
-                  Come back tomorrow for a new challenge.
-                </p>
-              </div>
-            )}
-          </div>
-        </div>
+        
 
         {/* Challenge Info */}
-        <div className="bg-white rounded-lg p-4 shadow-sm border">
+        <div className="bg-white rounded-lg p-4 shadow-sm">
           <div className="flex justify-between items-center">
             <div className="flex items-center gap-4">
               <span className="text-sm text-gray-500">Daily Challenge</span>

@@ -37,7 +37,7 @@ const UserInputSection = ({
   getScoreMessage,
 }: UserInputSectionProps) => {
   return (
-    <div className="bg-white rounded-lg shadow-sm border">
+    <div className="bg-white rounded-lg shadow-sm">
       <div className="p-4 border-b border-gray-200">
         <h3 className="text-lg font-semibold text-gray-900">
           Your Prompt Guess:
@@ -184,7 +184,7 @@ const UserInputSection = ({
         </div>
 
         {/* Submission details */}
-        <div className="p-4 bg-gray-50 border border-gray-200 rounded-lg">
+        <div className="p-4 bg-gray-50  rounded-lg">
           <div className="flex justify-between items-center text-sm text-gray-600">
             <span>
           <strong>Submitted:</strong>{" "}

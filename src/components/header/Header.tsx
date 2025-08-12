@@ -29,6 +29,7 @@ function Header() {
                 >
                   Daily Challenge
                 </Link>
+                
               </div>
             )}
             {user ? (

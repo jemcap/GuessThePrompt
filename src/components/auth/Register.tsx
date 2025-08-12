@@ -51,7 +51,7 @@ const Register = () => {
 
     try {
       await registerUser(data.username, data.email, data.password);
-      navigate("/play");
+      navigate("/daily");
     } catch (err) {
       setError(err instanceof Error ? err.message : "An error occurred");
     } finally {
