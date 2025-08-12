@@ -213,7 +213,7 @@ npm install -D nodemon prisma jest supertest
 ```env
 # Server
 NODE_ENV=development
-PORT=3001
+PORT=3003
 
 # Database
 DATABASE_URL="postgresql://developer:dev_password_123@localhost:5432/guesstheprompt_dev"
@@ -373,7 +373,7 @@ require('dotenv').config();
 const app = require('./src/app');
 const { logger } = require('./src/utils/logger');
 
-const PORT = process.env.PORT || 3001;
+const PORT = process.env.PORT || 3003;
 
 const server = app.listen(PORT, () => {
   logger.info(`Server running on port ${PORT}`);

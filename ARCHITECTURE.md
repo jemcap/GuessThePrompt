@@ -729,7 +729,7 @@ services:
       REDIS_URL: redis://redis:6379
       NODE_ENV: development
     ports:
-      - "3001:3001"
+      - "3003:3003"
     depends_on:
       - postgres
       - redis
@@ -737,7 +737,7 @@ services:
   frontend:
     build: ./frontend
     environment:
-      VITE_API_URL: http://localhost:3001
+      VITE_API_URL: http://localhost:3003
     ports:
       - "3000:3000"
     depends_on:
