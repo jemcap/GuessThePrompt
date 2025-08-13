@@ -2,40 +2,33 @@ import { useState, useEffect } from "react";
 import { useAuth } from "../../contexts/AuthContext";
 import AIOutputDisplay from "./AIOutputDisplay";
 import UserInputSection from "./UserInputSection";
+import { 
+  DailyPromptsApiService, 
+  DailyPromptsApiError 
+} from "../../services/dailyPromptsApi";
+import type { DailyPrompt, DailySubmission } from "../../services/dailyPromptsApi";
 
-interface DailyPrompt {
-  id: string;
-  date: string;
-  originalPrompt: string;
-  aiOutput: string;
-  outputType: "text" | "code";
-  difficulty: number;
-  category: string;
-}
+// Interfaces are now imported from API service
 
-interface UserSubmission {
-  promptId: string;
-  userPrompt: string;
-  submittedAt: string;
-  score?: number;
-}
+// Component now uses state variables directly instead of interface
 
 const PromptOfTheDay = () => {
   const { user } = useAuth();
+  
+  // Core data state
   const [dailyPrompt, setDailyPrompt] = useState<DailyPrompt | null>(null);
+  const [submission, setSubmission] = useState<DailySubmission | null>(null);
+  
+  // UI state
   const [userAnswer, setUserAnswer] = useState("");
   const [hasSubmitted, setHasSubmitted] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submission, setSubmission] = useState<UserSubmission | null>(null);
-
-  // Get today's date as a string for prompt identification
-  const getTodayKey = () => {
-    return new Date().toISOString().split("T")[0];
-  };
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   // Generate personalized message based on score
   const getScoreMessage = (score: number) => {
-    if (score >= 90) {
+    if (score >= 900) { // Adjusted for backend's 1000-point scale
       return {
         title: "Incredible!",
         message: "You're a prompt engineering master! That was spot-on.",
@@ -43,7 +36,7 @@ const PromptOfTheDay = () => {
         bgColor: "bg-purple-50",
         borderColor: "border-purple-200"
       };
-    } else if (score >= 80) {
+    } else if (score >= 800) {
       return {
         title: "Excellent!",
         message: "Outstanding work! You really nailed the essence of this prompt.",
@@ -51,7 +44,7 @@ const PromptOfTheDay = () => {
         bgColor: "bg-green-50",
         borderColor: "border-green-200"
       };
-    } else if (score >= 70) {
+    } else if (score >= 700) {
       return {
         title: "Great Job!",
         message: "Solid attempt! You captured most of the key elements.",
@@ -59,7 +52,7 @@ const PromptOfTheDay = () => {
         bgColor: "bg-blue-50",
         borderColor: "border-blue-200"
       };
-    } else if (score >= 60) {
+    } else if (score >= 600) {
       return {
         title: "Good Effort!",
         message: "Nice try! You're on the right track, keep practicing.",
@@ -67,7 +60,7 @@ const PromptOfTheDay = () => {
         bgColor: "bg-indigo-50",
         borderColor: "border-indigo-200"
       };
-    } else if (score >= 40) {
+    } else if (score >= 400) {
       return {
         title: "Getting There!",
         message: "Good start! Focus on being more specific and detailed next time.",
@@ -86,135 +79,156 @@ const PromptOfTheDay = () => {
     }
   };
 
-  // Mock daily prompts (in real app, this would come from backend)
-  const getDailyPrompt = (dateKey: string): DailyPrompt => {
-    // Simple hash to generate consistent prompt for each day
-    const prompts: DailyPrompt[] = [
-      {
-        id: "day-1",
-        date: dateKey,
-        originalPrompt:
-          "You are a creative writing assistant. Write a short story about a coffee shop that only exists on rainy days. The story should be exactly 150 words and have a mysterious, whimsical tone.",
-        aiOutput: `The Raindrop Café appears only when the sky weeps. Maria discovered this on a Tuesday, seeking shelter from an unexpected downpour. The weathered sign materialized through the mist: "Open Only During Rain."
-
-Inside, steam rose from countless cups while patrons spoke in hushed whispers. The barista, an elderly woman with silver hair, served coffee that tasted like memories—some sweet, some bitter, all authentic.
-
-"How long have you been here?" Maria asked.
-
-"Since the first rainfall," the woman replied, her eyes twinkling. "We exist between drops, in the spaces where people need comfort most."
-
-Maria sipped her drink, tasting childhood summers and forgotten dreams. When the rain stopped, she found herself standing on an empty street corner, holding only the lingering warmth of the cup and the certainty that she'd return the next time storms gathered overhead.`,
-        outputType: "text",
-        difficulty: 3,
-        category: "Creative Writing",
-      },
-      {
-        id: "day-2",
-        date: dateKey,
-        originalPrompt:
-          "You are a senior React developer. Create a custom hook called useLocalStorage that provides a simple interface for storing and retrieving data from localStorage with TypeScript support. Include error handling and sync with useState.",
-        aiOutput: `import { useState, useEffect } from 'react';
-
-type SetValue<T> = (value: T | ((prevValue: T) => T)) => void;
-
-function useLocalStorage<T>(key: string, initialValue: T): [T, SetValue<T>] {
-  // State to store our value
-  const [storedValue, setStoredValue] = useState<T>(() => {
-    try {
-      const item = window.localStorage.getItem(key);
-      return item ? JSON.parse(item) : initialValue;
-    } catch (error) {
-      console.warn(\`Error reading localStorage key "\${key}":\`, error);
-      return initialValue;
-    }
-  });
-
-  // Return a wrapped version of useState's setter function that persists the new value to localStorage
-  const setValue: SetValue<T> = (value) => {
-    try {
-      const valueToStore = value instanceof Function ? value(storedValue) : value;
-      setStoredValue(valueToStore);
-      window.localStorage.setItem(key, JSON.stringify(valueToStore));
-    } catch (error) {
-      console.warn(\`Error setting localStorage key "\${key}":\`, error);
-    }
-  };
-
-  return [storedValue, setValue];
-}
-
-export default useLocalStorage;`,
-        outputType: "code",
-        difficulty: 4,
-        category: "React Development",
-      },
-    ];
-
-    // Use date hash to select prompt consistently
-    const hash = dateKey
-      .split("-")
-      .reduce((acc, part) => acc + parseInt(part), 0);
-    return prompts[hash % prompts.length];
-  };
-
-  // Check if user has already submitted for today's prompt
-  const checkSubmissionStatus = () => {
+  /**
+   * Load today's prompt and user's submission status
+   * This replaces the old mock data approach with real API calls
+   * Optimized to use the combined data from your backend's single endpoint
+   */
+  const loadTodaysChallenge = async () => {
     if (!user) return;
+    
+    try {
+      setLoading(true);
+      setError(null);
 
-    const todayKey = getTodayKey();
-    const submissionKey = `submission_${user.id}_${todayKey}`;
-    const savedSubmission = localStorage.getItem(submissionKey);
+      // Your backend returns both prompt and submission data in one call
+      // So we'll make one optimized request
+      const response = await fetch('http://localhost:3003/api/v1/daily-prompts/today', {
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
 
-    if (savedSubmission) {
-      const parsedSubmission = JSON.parse(savedSubmission);
-      setSubmission(parsedSubmission);
-      setHasSubmitted(true);
-      setUserAnswer(parsedSubmission.userPrompt);
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      }
+
+      const data = await response.json();
+      console.log('Full API response:', data);
+
+      if (data.success && data.data) {
+        const { prompt, hasSubmitted, submission } = data.data;
+        
+        setDailyPrompt(prompt);
+        
+        if (hasSubmitted && submission) {
+          setSubmission(submission);
+          setHasSubmitted(true);
+          setUserAnswer(submission.userPrompt);
+          console.log('User has already submitted:', submission);
+        } else {
+          console.log('User can submit a new answer');
+        }
+      } else {
+        throw new Error('Invalid response format from API');
+      }
+
+    } catch (error) {
+      console.error('Failed to load today\'s challenge:', error);
+      
+      if (error instanceof DailyPromptsApiError) {
+        setError(`API Error: ${error.message}`);
+      } else {
+        setError(`Failed to load today's challenge: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      }
+    } finally {
+      setLoading(false);
     }
   };
 
-  // Load today's prompt
+  // Load data when component mounts or user changes
   useEffect(() => {
-    const todayKey = getTodayKey();
-    const prompt = getDailyPrompt(todayKey);
-    setDailyPrompt(prompt);
-    checkSubmissionStatus();
+    loadTodaysChallenge();
   }, [user]);
 
+  /**
+   * Handle user submission
+   * This now calls the real API instead of using mock localStorage
+   */
   const handleSubmit = async () => {
     if (!user || !dailyPrompt || hasSubmitted || !userAnswer.trim()) return;
 
     setIsSubmitting(true);
+    setError(null);
 
     try {
-      // Simulate API call delay
-      await new Promise((resolve) => setTimeout(resolve, 1500));
+      // Submit to the backend API for real scoring
+      const response = await DailyPromptsApiService.submitGuess(
+        userAnswer.trim()
+      );
 
-      // Create submission record
-      const newSubmission: UserSubmission = {
-        promptId: dailyPrompt.id,
-        userPrompt: userAnswer,
-        submittedAt: new Date().toISOString(),
-        score: Math.floor(Math.random() * 100), // Mock score
-      };
-
-      // Save to localStorage (in real app, this would be saved to backend)
-      const submissionKey = `submission_${user.id}_${getTodayKey()}`;
-      localStorage.setItem(submissionKey, JSON.stringify(newSubmission));
-
-      setSubmission(newSubmission);
+      // Update component state with the real submission data
+      setSubmission(response.submission);
       setHasSubmitted(true);
+
+      console.log('Submission successful:', {
+        score: response.submission.score,
+        breakdown: response.scoreBreakdown,
+        message: response.message
+      });
+
     } catch (error) {
-      console.error("Failed to submit:", error);
+      console.error('Failed to submit guess:', error);
+      
+      if (error instanceof DailyPromptsApiError) {
+        setError(`Submission failed: ${error.message}`);
+      } else {
+        setError('Failed to submit your guess. Please try again.');
+      }
     } finally {
       setIsSubmitting(false);
     }
   };
 
+  // Loading state
+  if (loading) {
+    return (
+      <div className="bg-gray-50 px-6 py-8">
+        <div className="max-w-7xl mx-auto">
+          <div className="flex flex-col items-center justify-center min-h-64">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mb-4"></div>
+            <p className="text-gray-600">Loading today's challenge...</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Error state
+  if (error) {
+    return (
+      <div className="bg-gray-50 px-6 py-8">
+        <div className="max-w-7xl mx-auto">
+          <div className="bg-white rounded-lg p-6 shadow-sm border border-red-200">
+            <div className="text-center">
+              <div className="text-red-600 text-xl mb-2">⚠️</div>
+              <h2 className="text-lg font-semibold text-red-800 mb-2">
+                Unable to Load Challenge
+              </h2>
+              <p className="text-red-600 mb-4">{error}</p>
+              <button
+                onClick={() => loadTodaysChallenge()}
+                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+              >
+                Try Again
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // No prompt available
   if (!dailyPrompt) {
     return (
-      <div className="flex justify-center items-center min-h-64">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+      <div className="bg-gray-50 px-6 py-8">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center text-gray-600">
+            No challenge available for today.
+          </div>
+        </div>
       </div>
     );
   }
@@ -222,7 +236,34 @@ export default useLocalStorage;`,
   return (
     <div className="bg-gray-50 px-6 py-8">
       <div className="max-w-7xl mx-auto space-y-6">
-        
+        {/* Header */}
+        <div className="bg-white rounded-lg p-6 shadow-sm border">
+          <div className="text-center">
+            <h1 className="text-2xl font-bold text-gray-900 mb-2">
+              Prompt of the Day
+            </h1>
+            <p className="text-gray-600">
+              {new Date().toLocaleDateString("en-US", {
+                weekday: "long",
+                year: "numeric",
+                month: "long",
+                day: "numeric",
+              })}
+            </p>
+            {hasSubmitted && submission && submission.score !== undefined && (
+              <div className={`mt-4 p-3 rounded-lg border ${getScoreMessage(submission.score).bgColor} ${getScoreMessage(submission.score).borderColor}`}>
+                <div className="flex items-center justify-center gap-3">
+                  <span className={`font-medium ${getScoreMessage(submission.score).color}`}>
+                    {getScoreMessage(submission.score).title} You scored {submission.score}/{dailyPrompt.maxScore}
+                  </span>
+                </div>
+                <p className={`text-sm mt-1 text-center ${getScoreMessage(submission.score).color.replace('800', '600')}`}>
+                  Come back tomorrow for a new challenge.
+                </p>
+              </div>
+            )}
+          </div>
+        </div>
 
         {/* Challenge Info */}
         <div className="bg-white rounded-lg p-4 shadow-sm">

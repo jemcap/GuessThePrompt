@@ -1,6 +1,6 @@
 interface AIOutputDisplayProps {
   aiOutput: string;
-  outputType: "text" | "code";
+  outputType: "text" | "code" | "image";
 }
 
 const AIOutputDisplay = ({ aiOutput, outputType }: AIOutputDisplayProps) => {
@@ -16,17 +16,27 @@ const AIOutputDisplay = ({ aiOutput, outputType }: AIOutputDisplayProps) => {
       </div>
       
       <div className="p-4">
-        <div
-          className={`p-4 rounded-lg ${
-            outputType === "code"
-              ? "bg-gray-900 text-gray-100 font-mono text-sm"
-              : "bg-gray-50 text-gray-900"
-          }`}
-        >
-          <pre className="whitespace-pre-wrap break-words">
-            {aiOutput}
-          </pre>
-        </div>
+        {outputType === "image" ? (
+          <div className="p-4 rounded-lg bg-gray-50">
+            <img
+              src={aiOutput}
+              alt="AI generated output"
+              className="max-w-full h-auto rounded border"
+            />
+          </div>
+        ) : (
+          <div
+            className={`max-h-[750px] overflow-y-scroll p-4 rounded-lg ${
+              outputType === "code"
+                ? "bg-gray-900 text-gray-100 font-mono text-sm"
+                : "bg-gray-50 text-gray-900"
+            }`}
+          >
+            <pre className="whitespace-pre-wrap break-words">
+              {aiOutput}
+            </pre>
+          </div>
+        )}
       </div>
     </div>
   );

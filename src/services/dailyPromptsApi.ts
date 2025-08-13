@@ -1,0 +1,272 @@
+/**
+ * Daily Prompts API Service
+ * 
+ * This service handles all communication with the backend API for daily prompts.
+ * It includes type-safe interfaces matching the backend schema and proper error handling.
+ * 
+ * Backend endpoints (from SESSION_SUMMARY_2025-08-12.md):
+ * - GET /api/v1/daily-prompts/today - Get today's challenge
+ * - POST /api/v1/daily-prompts/submit - Submit guess
+ * - GET /api/v1/daily-prompts/leaderboard - Daily rankings
+ * - GET /api/v1/daily-prompts/stats - User statistics
+ */
+
+// API Configuration
+const API_BASE_URL = 'http://localhost:3003/api/v1';
+
+// TypeScript interfaces matching the backend schema
+export interface DailyPrompt {
+  id: string;
+  date: string;
+  originalPrompt: string; // The actual prompt that was used
+  aiOutput: string;       // The AI's response to that prompt
+  outputType: 'text' | 'code' | 'image';
+  difficulty: number;     // 1-5 scale
+  category: string;
+  maxScore: number;       // Default 1000
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface DailySubmission {
+  id?: string;
+  userId?: string;
+  dailyPromptId?: string;
+  userPrompt: string;     // User's guess
+  score?: number;
+  similarity?: number;
+  keywordMatch?: number;
+  creativityBonus?: number;
+  lengthOptimization?: number;
+  submittedAt?: string;
+}
+
+export interface SubmissionResponse {
+  success: boolean;
+  submission: DailySubmission;
+  scoreBreakdown: {
+    similarity: number;
+    keywordMatch: number;
+    creativityBonus: number;
+    lengthOptimization: number;
+    total: number;
+  };
+  message: string;
+}
+
+export interface ApiError {
+  error: string;
+  details?: string;
+  status: number;
+}
+
+// Custom error class for API errors
+export class DailyPromptsApiError extends Error {
+  public status: number;
+  public details?: string;
+
+  constructor(error: ApiError) {
+    super(error.error);
+    this.status = error.status;
+    this.details = error.details;
+    this.name = 'DailyPromptsApiError';
+  }
+}
+
+/**
+ * Generic API request handler with proper error handling and credentials
+ */
+async function apiRequest<T>(
+  endpoint: string,
+  options: RequestInit = {}
+): Promise<T> {
+  const url = `${API_BASE_URL}${endpoint}`;
+  
+  try {
+    const response = await fetch(url, {
+      ...options,
+      headers: {
+        'Content-Type': 'application/json',
+        ...options.headers,
+      },
+      // Include credentials for HTTP-only cookies
+      credentials: 'include',
+    });
+
+    // Handle non-JSON responses (like 404, 500, etc.)
+    if (!response.ok) {
+      let errorData: ApiError;
+      try {
+        errorData = await response.json();
+        console.log('API Error:', errorData);
+      } catch {
+        // If response isn't JSON, create a generic error
+        errorData = {
+          error: `HTTP ${response.status}: ${response.statusText}`,
+          status: response.status,
+        };
+      }
+      throw new DailyPromptsApiError(errorData);
+    }
+
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    // Handle network errors, timeouts, etc.
+    if (error instanceof DailyPromptsApiError) {
+      throw error; // Re-throw our custom errors
+    }
+    
+    // Handle network/fetch errors
+    throw new DailyPromptsApiError({
+      error: 'Network request failed',
+      details: error instanceof Error ? error.message : 'Unknown network error',
+      status: 0,
+    });
+  }
+}
+
+/**
+ * Daily Prompts API Service Class
+ * 
+ * This provides a clean interface for all daily prompt operations.
+ * Each method handles specific API endpoints with proper typing and error handling.
+ */
+export class DailyPromptsApiService {
+  /**
+   * Get today's daily prompt
+   * 
+   * This corresponds to: GET /api/v1/daily-prompts/today
+   * Returns the challenge for the current date, creating one if it doesn't exist.
+   */
+  static async getTodaysPrompt(): Promise<DailyPrompt> {
+    try {
+      const response = await apiRequest<{ 
+        success: boolean;
+        data: { 
+          prompt: DailyPrompt;
+          hasSubmitted: boolean;
+          submission: DailySubmission | null;
+        }
+      }>('/daily-prompts/today');
+      
+      console.log('Raw API response:', response);
+      return response.data.prompt;
+    } catch (error) {
+      console.error('Failed to fetch today\'s prompt:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Submit a user's prompt guess
+   * 
+   * This corresponds to: POST /api/v1/daily-prompts/submit
+   * Backend automatically finds today's prompt, so no promptId needed.
+   * 
+   * @param userPrompt - The user's guess for the original prompt
+   */
+  static async submitGuess(
+    userPrompt: string
+  ): Promise<SubmissionResponse> {
+    try {
+      const response = await apiRequest<SubmissionResponse>('/daily-prompts/submit', {
+        method: 'POST',
+        body: JSON.stringify({
+          userPrompt,
+        }),
+      });
+      return response;
+    } catch (error) {
+      console.error('Failed to submit guess:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Get user's submission for today's prompt (if any)
+   * 
+   * This helps check if the user has already submitted today.
+   * Since our backend returns this data along with the prompt, we'll optimize by combining calls.
+   */
+  static async getTodaysSubmission(): Promise<DailySubmission | null> {
+    try {
+      const response = await apiRequest<{ 
+        success: boolean;
+        data: { 
+          prompt: DailyPrompt;
+          hasSubmitted: boolean;
+          submission: DailySubmission | null;
+        }
+      }>('/daily-prompts/today');
+      
+      return response.data.submission;
+    } catch (error) {
+      // If there's no submission, that's fine - return null
+      if (error instanceof DailyPromptsApiError && error.status === 404) {
+        return null;
+      }
+      console.error('Failed to fetch today\'s submission:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Get daily leaderboard
+   * 
+   * This corresponds to: GET /api/v1/daily-prompts/leaderboard
+   * Returns top scores for today's challenge.
+   */
+  static async getLeaderboard(): Promise<Array<{
+    userId: string;
+    username: string;
+    score: number;
+    submittedAt: string;
+  }>> {
+    try {
+      const response = await apiRequest<{ leaderboard: any[] }>('/daily-prompts/leaderboard');
+      return response.leaderboard;
+    } catch (error) {
+      console.error('Failed to fetch leaderboard:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Get user statistics
+   * 
+   * This corresponds to: GET /api/v1/daily-prompts/stats
+   * Returns user's overall performance metrics.
+   */
+  static async getUserStats(): Promise<{
+    totalSubmissions: number;
+    averageScore: number;
+    bestScore: number;
+    currentStreak: number;
+    longestStreak: number;
+  }> {
+    try {
+      const response = await apiRequest<{ stats: any }>('/daily-prompts/stats');
+      return response.stats;
+    } catch (error) {
+      console.error('Failed to fetch user stats:', error);
+      throw error;
+    }
+  }
+}
+
+/**
+ * Utility function to check if the API is available
+ * 
+ * This can be used for health checks and debugging connectivity issues.
+ */
+export async function checkApiHealth(): Promise<boolean> {
+  try {
+    await fetch(`${API_BASE_URL.replace('/api/v1', '')}/health`, {
+      credentials: 'include',
+    });
+    return true;
+  } catch {
+    return false;
+  }
+}

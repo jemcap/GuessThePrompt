@@ -1,6 +1,5 @@
 import { createContext, useState, useEffect, useContext } from "react";
 import { useNavigate } from "react-router-dom";
-import { set } from "zod";
 
 interface User {
   id: string;
@@ -51,46 +50,47 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     };
   }, [user]);
 
-  const makeAuthenticatedRequest = async (
-    url: string,
-    options: RequestInit = {}
-  ) => {
-    const response = await fetch(url, {
-      ...options,
-      credentials: "include", // Always include cookies
-      headers: {
-        "Content-Type": "application/json",
-        ...options.headers,
-      },
-    });
+  // Utility function for making authenticated requests (currently unused but available for future use)
+  // const makeAuthenticatedRequest = async (
+  //   url: string,
+  //   options: RequestInit = {}
+  // ) => {
+  //   const response = await fetch(url, {
+  //     ...options,
+  //     credentials: "include", // Always include cookies
+  //     headers: {
+  //       "Content-Type": "application/json",
+  //       ...options.headers,
+  //     },
+  //   });
 
-    // Handle token expiration
-    if (response.status === 401) {
-      const errorData = await response.json().catch(() => ({}));
+  //   // Handle token expiration
+  //   if (response.status === 401) {
+  //     const errorData = await response.json().catch(() => ({}));
 
-      if (errorData.code === "TOKEN_EXPIRED") {
-        try {
-          await refreshTokens();
-          // Retry the original request
-          return fetch(url, {
-            ...options,
-            credentials: "include",
-            headers: {
-              "Content-Type": "application/json",
-              ...options.headers,
-            },
-          });
-        } catch (refreshError) {
-          // Refresh failed, logout user
-          setUser(null);
-          navigate("/login");
-          throw new Error("Session expired. Please log in again.");
-        }
-      }
-    }
+  //     if (errorData.code === "TOKEN_EXPIRED") {
+  //       try {
+  //         await refreshTokens();
+  //         // Retry the original request
+  //         return fetch(url, {
+  //           ...options,
+  //           credentials: "include",
+  //           headers: {
+  //             "Content-Type": "application/json",
+  //             ...options.headers,
+  //           },
+  //         });
+  //       } catch (refreshError) {
+  //         // Refresh failed, logout user
+  //         setUser(null);
+  //         navigate("/login");
+  //         throw new Error("Session expired. Please log in again.");
+  //       }
+  //     }
+  //   }
 
-    return response;
-  };
+  //   return response;
+  // };
 
   const refreshTokens = async () => {
     const response = await fetch("http://localhost:3003/api/v1/auth/refresh", {
@@ -149,9 +149,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     });
 
     const data = await response.json();
+    console.log(data)
 
     if (!response.ok) {
-      throw new Error(data.message || "Login failed");
+      throw new Error(data.error || "Login failed");
     }
 
     setUser(data.user);
