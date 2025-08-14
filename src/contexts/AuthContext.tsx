@@ -5,6 +5,9 @@ interface User {
   id: string;
   email: string;
   username: string;
+  totalXP?: number;
+  level?: number;
+  rank?: string;
 }
 
 interface AuthContextType {

@@ -7,7 +7,7 @@ function Layout() {
   const hideHeader = ['/login', '/register'].includes(location.pathname);
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-900">
       {!hideHeader && <Header />}
       <Outlet />
     </div>

@@ -1,5 +1,15 @@
 @import "tailwindcss";
 
+/* Global dark theme defaults */
+html {
+  color-scheme: dark;
+}
+
+body {
+  background-color: rgb(17 24 39); /* gray-900 */
+  color: rgb(243 244 246); /* gray-100 */
+}
+
 @layer utilities {
   .align-elements {
     margin-left: auto;

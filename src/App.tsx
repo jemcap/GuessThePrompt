@@ -6,6 +6,7 @@ import Home from "./pages/Home";
 import Login from "./components/auth/Login";
 import Register from "./components/auth/Register";
 import ProtectedRoute from "./components/auth/ProtectedRoute";
+import Profile from "./components/profile/Profile";
 
 function App() {
   return (
@@ -24,6 +25,11 @@ function App() {
             />
             <Route path="login" element={<Login />} />
             <Route path="register" element={<Register />} />
+            <Route path="profile" element={
+              <ProtectedRoute>
+                <Profile />
+              </ProtectedRoute>
+            } />
           </Route>
         </Routes>
       </AuthProvider>

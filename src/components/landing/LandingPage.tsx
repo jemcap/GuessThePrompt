@@ -10,8 +10,8 @@ const LandingPage = () => {
 
   return (
     <div
-      className="min-h-screen bg-gradient-to-b from-gray-50
-      to-white"
+      className="min-h-screen bg-gradient-to-b from-gray-900
+      to-gray-800"
     >
       {/* Hero Section */}
       <section
@@ -21,12 +21,12 @@ const LandingPage = () => {
         <div className="max-w-4xl mx-auto">
           <h1
             className="text-5xl md:text-6xl font-bold 
-     text-gray-900 mb-6"
+     text-white mb-6"
           >
             Master the Art of <span>Prompt Engineering</span>
           </h1>
           <p
-            className="text-xl text-gray-600 mb-8 
+            className="text-xl text-gray-300 mb-8 
      leading-relaxed"
           >
             GuessThePrompt is a gamified learning platform where you
@@ -38,7 +38,7 @@ const LandingPage = () => {
             <button
               onClick={() => navigate("/daily")}
               className="px-8 py-3 bg-blue-600 
-     text-white font-semibold rounded-lg hover:bg-blue-700 
+     text-white font-semibold rounded-lg hover:bg-blue-500 
      transition-colors"
             >
               Start Playing
@@ -46,8 +46,8 @@ const LandingPage = () => {
             <button
               onClick={scrollToHowItWorks}
               className="px-8 py-3 border-2 
-     border-gray-300 text-gray-700 font-semibold rounded-lg 
-     hover:border-gray-400 transition-colors"
+     border-gray-500 text-gray-200 font-semibold rounded-lg 
+     hover:border-gray-400 hover:text-white transition-colors"
             >
               Learn More
             </button>
@@ -60,12 +60,12 @@ const LandingPage = () => {
         <div className="max-w-6xl mx-auto">
           <h2
             className="text-4xl font-bold text-center 
-     text-gray-900 mb-4"
+     text-white mb-4"
           >
             How It Works
           </h2>
           <p
-            className="text-lg text-gray-600 text-center 
+            className="text-lg text-gray-300 text-center 
      mb-12 max-w-3xl mx-auto"
           >
             Learn by doing! Watch how GuessThePrompt helps you develop intuition
@@ -118,8 +118,8 @@ const LandingPage = () => {
                   1
                 </span>
               </div>
-              <h3 className="text-xl font-semibold mb-2">See the Outcome</h3>
-              <p className="text-gray-600">
+              <h3 className="text-xl font-semibold mb-2 text-white">See the Outcome</h3>
+              <p className="text-gray-300">
                 View an AI-generated text, image, or code snippet
               </p>
             </div>
@@ -135,8 +135,8 @@ const LandingPage = () => {
                   2
                 </span>
               </div>
-              <h3 className="text-xl font-semibold mb-2">Write Your Prompt</h3>
-              <p className="text-gray-600">
+              <h3 className="text-xl font-semibold mb-2 text-white">Write Your Prompt</h3>
+              <p className="text-gray-300">
                 Craft a prompt that would produce that outcome
               </p>
             </div>
@@ -152,8 +152,8 @@ const LandingPage = () => {
                   3
                 </span>
               </div>
-              <h3 className="text-xl font-semibold mb-2">Get Your Score</h3>
-              <p className="text-gray-600">
+              <h3 className="text-xl font-semibold mb-2 text-white">Get Your Score</h3>
+              <p className="text-gray-300">
                 Receive points based on similarity to the original prompt
               </p>
             </div>

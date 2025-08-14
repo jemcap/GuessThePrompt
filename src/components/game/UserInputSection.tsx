@@ -33,12 +33,12 @@ const UserInputSection = ({
   getScoreMessage,
 }: UserInputSectionProps) => {
   return (
-    <div className="bg-white rounded-lg shadow-sm">
-      <div className="p-4 border-b border-gray-200">
-        <h3 className="text-lg font-semibold text-gray-900">
+    <div className="bg-gray-800 rounded-lg shadow-sm border border-gray-700">
+      <div className="p-4 border-b border-gray-600">
+        <h3 className="text-lg font-semibold text-white">
           Your Prompt Guess:
         </h3>
-        <p className="text-sm text-gray-600 mt-1">
+        <p className="text-sm text-gray-300 mt-1">
           {hasSubmitted
             ? "Your submitted prompt:"
             : "Enter your best guess for the prompt that created the AI output."}
@@ -52,11 +52,11 @@ const UserInputSection = ({
           <div className="flex items-center justify-between">
             <label
               htmlFor="user-prompt"
-              className="text-sm font-medium text-gray-700"
+              className="text-sm font-medium text-white"
             >
               Answer
             </label>
-            <div className="text-xs text-gray-500">
+            <div className="text-xs text-gray-400">
               {hasSubmitted
                 ? "Submission locked"
                 : `${userAnswer.length}/1000 characters`}
@@ -74,8 +74,8 @@ const UserInputSection = ({
             }
             className={`w-full h-40 lg:h-64 px-4 py-3 border rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none transition-all duration-200 ${
               hasSubmitted || isSubmitting
-                ? "bg-gray-50 text-gray-500 border-gray-200 cursor-not-allowed"
-                : "border-gray-300 bg-white text-gray-900 hover:border-gray-400 focus:shadow-sm"
+                ? "bg-gray-700 text-gray-400 border-gray-600 cursor-not-allowed"
+                : "border-gray-600 bg-gray-700 text-white hover:border-gray-500 focus:shadow-sm"
             }`}
             disabled={hasSubmitted || isSubmitting}
             maxLength={1000}
@@ -83,11 +83,11 @@ const UserInputSection = ({
         </div>
         {/* Notes Section */}
         {!hasSubmitted && (
-          <div className="border-t border-gray-100 bg-gray-50 p-4">
+          <div className="border-t border-gray-600 bg-gray-700 p-4">
             <div className="space-y-3">
               <div className="flex items-center gap-2">
                 <svg
-                  className="w-4 h-4 text-gray-500"
+                  className="w-4 h-4 text-gray-400"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -101,14 +101,14 @@ const UserInputSection = ({
                 </svg>
                 <label
                   htmlFor="user-notes"
-                  className="text-sm font-medium text-gray-700"
+                  className="text-sm font-medium text-white"
                 >
                   Notes
                 </label>
-                <span className="text-xs text-gray-500">(Optional)</span>
+                <span className="text-xs text-gray-400">(Optional)</span>
               </div>
 
-              <p className="text-xs text-gray-600 leading-relaxed">
+              <p className="text-xs text-gray-300 leading-relaxed">
                 Use this space to analyse the output, brainstorm ideas, or draft
                 your prompt before finalising above.
               </p>
@@ -119,8 +119,8 @@ const UserInputSection = ({
                 placeholder={`Jot down your thoughts...\n\n• What style or tone does this output have?\n• What specific instructions might have been given?\n• Any patterns or keywords you notice?`}
                 className={`w-full h-24 lg:h-32 px-4 py-3 border rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none transition-all duration-200 ${
                   hasSubmitted || isSubmitting
-                    ? "bg-gray-100 text-gray-500 border-gray-200 cursor-not-allowed"
-                    : "border-gray-200 bg-white text-gray-900 hover:border-gray-300 focus:shadow-sm"
+                    ? "bg-gray-700 text-gray-400 border-gray-600 cursor-not-allowed"
+                    : "border-gray-600 bg-gray-700 text-white hover:border-gray-500 focus:shadow-sm"
                 }`}
                 disabled={hasSubmitted || isSubmitting}
                 maxLength={1000}
@@ -131,7 +131,7 @@ const UserInputSection = ({
 
         {/* Submit Button Area */}
         <div className="flex justify-between items-center pt-2">
-          <div className="text-sm text-gray-500">
+          <div className="text-sm text-gray-400">
             {hasSubmitted && (
               <span className="flex items-center gap-2">
                 <div className="w-2 h-2 bg-green-500 rounded-full"></div>
@@ -143,7 +143,7 @@ const UserInputSection = ({
           <div className="flex items-center gap-4">
             {hasSubmitted && submission?.score !== undefined && (
               <div className="text-sm bg-blue-50 px-3 py-1 rounded-full border border-blue-200">
-                <span className="text-gray-600">Score: </span>
+                <span className="text-gray-300">Score: </span>
                 <span className="font-bold text-blue-600">
                   {submission.score}/1000
                 </span>
@@ -151,7 +151,7 @@ const UserInputSection = ({
             )}
 
             {hasSubmitted ? (
-              <div className="px-4 py-2 bg-green-100 text-green-700 rounded-lg font-medium border border-green-200">
+              <div className="px-4 py-2 bg-green-900/20 text-green-300 rounded-lg font-medium border border-green-700">
                 Submitted
               </div>
             ) : (
@@ -160,8 +160,8 @@ const UserInputSection = ({
                 disabled={!userAnswer.trim() || isSubmitting}
                 className={`px-8 py-3 rounded-xl font-medium transition-all duration-200 ${
                   !userAnswer.trim() || isSubmitting
-                    ? "bg-gray-200 text-gray-500 cursor-not-allowed"
-                    : "bg-blue-600 hover:bg-blue-700 text-white shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+                    ? "bg-gray-700 text-gray-500 cursor-not-allowed"
+                    : "bg-blue-600 hover:bg-blue-500 text-white shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
                 }`}
               >
                 {isSubmitting ? (
@@ -227,7 +227,7 @@ const UserInputSection = ({
                 >
                   {submission.score}
                 </div>
-                <div className="text-xs text-gray-600">out of 1000</div>
+                <div className="text-xs text-gray-400">out of 1000</div>
               </div>
             </div>
 
@@ -253,37 +253,37 @@ const UserInputSection = ({
           </div>
 
           {/* Original Prompt Reveal */}
-          <div className="p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
+          <div className="p-4 bg-yellow-900/20 border border-yellow-700 rounded-lg">
             <div className="flex items-center gap-2 mb-3">
-              <h4 className="font-semibold text-yellow-800">
+              <h4 className="font-semibold text-yellow-300">
                 The Original Prompt
               </h4>
             </div>
-            <div className="bg-white p-4 rounded border border-yellow-300">
-              <p className="text-sm text-gray-800 leading-relaxed whitespace-pre-wrap">
+            <div className="bg-gray-800 p-4 rounded border border-yellow-600">
+              <p className="text-sm text-gray-200 leading-relaxed whitespace-pre-wrap">
                 {originalPrompt}
               </p>
             </div>
-            <p className="text-xs text-yellow-700 mt-2 text-center italic">
+            <p className="text-xs text-yellow-400 mt-2 text-center italic">
               Compare this with your guess to see how close you were!
             </p>
           </div>
 
           {/* Submission details */}
-          <div className="p-4 bg-gray-50 rounded-lg">
-            <div className="flex justify-between items-center text-sm text-gray-600">
+          <div className="p-4 bg-gray-700 rounded-lg">
+            <div className="flex justify-between items-center text-sm text-gray-300">
               <span>
                 <strong>Submitted:</strong>{" "}
                 {submission.submittedAt
                   ? new Date(submission.submittedAt).toLocaleString()
                   : "Unknown"}
               </span>
-              <span className="text-blue-600 font-medium">
+              <span className="text-blue-400 font-medium">
                 Challenge #{challengeId.replace("day-", "")}
               </span>
             </div>
-            <div className="mt-3 pt-3 border-t border-gray-300">
-              <p className="text-xs text-gray-500 text-center">
+            <div className="mt-3 pt-3 border-t border-gray-600">
+              <p className="text-xs text-gray-400 text-center">
                 Come back tomorrow for a new prompt challenge and keep improving
                 your skills!
               </p>

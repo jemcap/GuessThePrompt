@@ -32,49 +32,49 @@ const PromptOfTheDay = () => {
       return {
         title: "Incredible!",
         message: "You're a prompt engineering master! That was spot-on.",
-        color: "text-purple-800",
-        bgColor: "bg-purple-50",
-        borderColor: "border-purple-200"
+        color: "text-purple-300",
+        bgColor: "bg-purple-900/20",
+        borderColor: "border-purple-700"
       };
     } else if (score >= 800) {
       return {
         title: "Excellent!",
         message: "Outstanding work! You really nailed the essence of this prompt.",
-        color: "text-green-800",
-        bgColor: "bg-green-50",
-        borderColor: "border-green-200"
+        color: "text-green-300",
+        bgColor: "bg-green-900/20",
+        borderColor: "border-green-700"
       };
     } else if (score >= 700) {
       return {
         title: "Great Job!",
         message: "Solid attempt! You captured most of the key elements.",
-        color: "text-blue-800",
-        bgColor: "bg-blue-50",
-        borderColor: "border-blue-200"
+        color: "text-blue-300",
+        bgColor: "bg-blue-900/20",
+        borderColor: "border-blue-700"
       };
     } else if (score >= 600) {
       return {
         title: "Good Effort!",
-        message: "Nice try! You're on the right track, keep practicing.",
-        color: "text-indigo-800",
-        bgColor: "bg-indigo-50",
-        borderColor: "border-indigo-200"
+        message: "Pretty good! You're on the right track, keep practicing.",
+        color: "text-indigo-300",
+        bgColor: "bg-indigo-900/20",
+        borderColor: "border-indigo-700"
       };
     } else if (score >= 400) {
       return {
         title: "Getting There!",
         message: "Good start! Focus on being more specific and detailed next time.",
-        color: "text-orange-800",
-        bgColor: "bg-orange-50",
-        borderColor: "border-orange-200"
+        color: "text-orange-300",
+        bgColor: "bg-orange-900/20",
+        borderColor: "border-orange-700"
       };
     } else {
       return {
         title: "Keep Learning!",
         message: "Every expert was once a beginner. Tomorrow's a new chance to improve!",
-        color: "text-red-800",
-        bgColor: "bg-red-50",
-        borderColor: "border-red-200"
+        color: "text-red-300",
+        bgColor: "bg-red-900/20",
+        borderColor: "border-red-700"
       };
     }
   };
@@ -184,11 +184,11 @@ const PromptOfTheDay = () => {
   // Loading state
   if (loading) {
     return (
-      <div className="bg-gray-50 px-6 py-8">
+      <div className="bg-gray-900 px-6 py-8">
         <div className="max-w-7xl mx-auto">
           <div className="flex flex-col items-center justify-center min-h-64">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mb-4"></div>
-            <p className="text-gray-600">Loading today's challenge...</p>
+            <p className="text-gray-300">Loading today's challenge...</p>
           </div>
         </div>
       </div>
@@ -198,18 +198,18 @@ const PromptOfTheDay = () => {
   // Error state
   if (error) {
     return (
-      <div className="bg-gray-50 px-6 py-8">
+      <div className="bg-gray-900 px-6 py-8">
         <div className="max-w-7xl mx-auto">
-          <div className="bg-white rounded-lg p-6 shadow-sm border border-red-200">
+          <div className="bg-gray-800 rounded-lg p-6 shadow-sm border border-red-700">
             <div className="text-center">
               <div className="text-red-600 text-xl mb-2">⚠️</div>
-              <h2 className="text-lg font-semibold text-red-800 mb-2">
+              <h2 className="text-lg font-semibold text-red-300 mb-2">
                 Unable to Load Challenge
               </h2>
-              <p className="text-red-600 mb-4">{error}</p>
+              <p className="text-red-300 mb-4">{error}</p>
               <button
                 onClick={() => loadTodaysChallenge()}
-                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-500 transition-colors"
               >
                 Try Again
               </button>
@@ -223,9 +223,9 @@ const PromptOfTheDay = () => {
   // No prompt available
   if (!dailyPrompt) {
     return (
-      <div className="bg-gray-50 px-6 py-8">
+      <div className="bg-gray-900 px-6 py-8">
         <div className="max-w-7xl mx-auto">
-          <div className="text-center text-gray-600">
+          <div className="text-center text-gray-300">
             No challenge available for today.
           </div>
         </div>
@@ -234,15 +234,15 @@ const PromptOfTheDay = () => {
   }
 
   return (
-    <div className="bg-gray-50 px-6 py-8">
+    <div className="bg-gray-900 px-6 py-8">
       <div className="max-w-7xl mx-auto space-y-6">
         {/* Header */}
-        <div className="bg-white rounded-lg p-6 shadow-sm border">
+        <div className="bg-gray-800 rounded-lg p-6 shadow-sm border border-gray-700">
           <div className="text-center">
-            <h1 className="text-2xl font-bold text-gray-900 mb-2">
+            <h1 className="text-2xl font-bold text-white mb-2">
               Prompt of the Day
             </h1>
-            <p className="text-gray-600">
+            <p className="text-gray-300">
               {new Date().toLocaleDateString("en-US", {
                 weekday: "long",
                 year: "numeric",
@@ -257,7 +257,7 @@ const PromptOfTheDay = () => {
                     {getScoreMessage(submission.score).title} You scored {submission.score}/{dailyPrompt.maxScore}
                   </span>
                 </div>
-                <p className={`text-sm mt-1 text-center ${getScoreMessage(submission.score).color.replace('800', '600')}`}>
+                <p className={`text-sm mt-1 text-center ${getScoreMessage(submission.score).color.replace('300', '400')}`}>
                   Come back tomorrow for a new challenge.
                 </p>
               </div>
@@ -266,22 +266,22 @@ const PromptOfTheDay = () => {
         </div>
 
         {/* Challenge Info */}
-        <div className="bg-white rounded-lg p-4 shadow-sm">
+        <div className="bg-gray-800 rounded-lg p-4 shadow-sm border border-gray-700">
           <div className="flex justify-between items-center">
             <div className="flex items-center gap-4">
-              <span className="text-sm text-gray-500">Daily Challenge</span>
+              <span className="text-sm text-gray-400">Daily Challenge</span>
               <span className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded-full">
                 {dailyPrompt.category}
               </span>
               <div className="flex items-center gap-2">
-                <span className="text-sm text-gray-500">Difficulty:</span>
+                <span className="text-sm text-gray-400">Difficulty:</span>
                 <div className="flex gap-1">
                   {[...Array(5)].map((_, i) => (
                     <div
                       key={i}
                       className={`w-2 h-2 rounded-full ${
                         i < dailyPrompt.difficulty
-                          ? "bg-orange-400"
+                          ? "bg-orange-500"
                           : "bg-gray-200"
                       }`}
                     />
@@ -289,7 +289,7 @@ const PromptOfTheDay = () => {
                 </div>
               </div>
             </div>
-            <div className="text-sm text-gray-500">One attempt only</div>
+            <div className="text-sm text-gray-400">One attempt only</div>
           </div>
         </div>
 
