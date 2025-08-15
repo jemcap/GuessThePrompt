@@ -170,13 +170,43 @@ export class DailyPromptsApiService {
     userPrompt: string
   ): Promise<SubmissionResponse> {
     try {
-      const response = await apiRequest<SubmissionResponse>('/daily-prompts/submit', {
+      const response = await apiRequest<any>('/daily-prompts/submit', {
         method: 'POST',
         body: JSON.stringify({
           userPrompt,
         }),
       });
-      return response;
+      
+      console.log('Raw API response in submitGuess:', response);
+      
+      // Transform backend response to match frontend expectations
+      // Backend returns: { success, data: { submission, scoreDetails, ... } }
+      // Frontend expects: { success, submission, scoreBreakdown, message }
+      if (response.success && response.data && response.data.submission) {
+        const backendSubmission = response.data.submission;
+        
+        return {
+          success: response.success,
+          submission: {
+            id: backendSubmission.id,
+            userPrompt: userPrompt,
+            score: backendSubmission.pointsEarned, // Map pointsEarned to score
+            similarity: backendSubmission.similarityScore,
+            submittedAt: backendSubmission.submittedAt
+          },
+          scoreBreakdown: response.data.scoreDetails || {
+            similarity: backendSubmission.similarityScore || 0,
+            keywordMatch: 0,
+            creativityBonus: 0,
+            lengthOptimization: 0,
+            total: backendSubmission.pointsEarned || 0
+          },
+          message: 'Submission successful'
+        };
+      } else {
+        console.error('Unexpected response structure:', response);
+        throw new Error('Invalid response structure from backend');
+      }
     } catch (error) {
       console.error('Failed to submit guess:', error);
       throw error;
