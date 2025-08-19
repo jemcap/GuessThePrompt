@@ -76,14 +76,14 @@ export const calculateRankFromLevel = (level: number): RankInfo => {
   };
 };
 
-// Calculate rank emoji based on level
-export const getRankEmoji = (level: number): string => {
-  if (level >= 101) return "🏆"; // Mythic
-  if (level >= 76) return "⭐"; // Legend  
-  if (level >= 51) return "💎"; // Grandmaster
-  if (level >= 36) return "🔥"; // Master
-  if (level >= 21) return "⚡"; // Expert
-  if (level >= 11) return "🎯"; // Adept
-  if (level >= 6) return "🌟"; // Apprentice
-  return "📚"; // Novice
-};
+// // Calculate rank emoji based on level
+// export const getRankEmoji = (level: number): string => {
+//   if (level >= 101) return "🏆"; // Mythic
+//   if (level >= 76) return "⭐"; // Legend  
+//   if (level >= 51) return "💎"; // Grandmaster
+//   if (level >= 36) return "🔥"; // Master
+//   if (level >= 21) return "⚡"; // Expert
+//   if (level >= 11) return "🎯"; // Adept
+//   if (level >= 6) return "🌟"; // Apprentice
+//   return "📚"; // Novice
+// };

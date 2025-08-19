@@ -171,7 +171,7 @@ const PromptOfTheDay = () => {
       // Automatically refresh the page after a short delay to show the score
       setTimeout(() => {
         window.location.reload();
-      }, 100); // 3 second delay to show the score
+      }, 100); // 100 millisecond delay to show the score
 
     } catch (error) {
       console.error('Failed to submit guess:', error);

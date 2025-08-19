@@ -278,9 +278,7 @@ const UserInputSection = ({
                   ? new Date(submission.submittedAt).toLocaleString()
                   : "Unknown"}
               </span>
-              <span className="text-blue-400 font-medium">
-                Challenge #{challengeId.replace("day-", "")}
-              </span>
+
             </div>
             <div className="mt-3 pt-3 border-t border-gray-600">
               <p className="text-xs text-gray-400 text-center">

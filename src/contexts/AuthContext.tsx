@@ -12,6 +12,7 @@ interface User {
 
 interface AuthContextType {
   user: User | null;
+  userStats: any;
   loading: boolean;
   login: (email: string, password: string) => Promise<void>;
   register: (
@@ -21,6 +22,7 @@ interface AuthContextType {
   ) => Promise<void>;
   logout: () => Promise<void>;
   checkAuth: () => Promise<void>;
+  getUserStats: (userId: string) => Promise<void>;
 }
 
 export const AuthContext = createContext<AuthContextType | undefined>(
@@ -29,6 +31,7 @@ export const AuthContext = createContext<AuthContextType | undefined>(
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
+  const [userStats, setUserStats] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
@@ -42,6 +45,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         } catch (error) {
           console.error("Token refresh failed:", error);
           setUser(null);
+          setUserStats(null);
         }
       }, 14 * 60 * 1000);
     }
@@ -107,6 +111,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
     const data = await response.json();
     setUser(data.user);
+    if (data.user?.id) {
+      await getUserStats(data.user.id);
+    }
     return data;
   };
 
@@ -121,17 +128,22 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       if (response.ok) {
         const data = await response.json();
         setUser(data.user);
+        if (data.user?.id) {
+          await getUserStats(data.user.id);
+        }
       } else {
         // Try to refresh the token
         try {
           await refreshTokens();
         } catch (refreshError) {
           setUser(null);
+          setUserStats(null);
         }
       }
     } catch (error) {
       console.error("Auth check failed:", error);
       setUser(null);
+      setUserStats(null);
     } finally {
       setLoading(false);
     }
@@ -159,6 +171,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     }
 
     setUser(data.user);
+    if (data.user?.id) {
+      await getUserStats(data.user.id);
+    }
   };
 
   const register = async (
@@ -182,6 +197,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     }
 
     setUser(data.user);
+    if (data.user?.id) {
+      await getUserStats(data.user.id);
+    }
   };
 
   const logout = async () => {
@@ -194,13 +212,37 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       console.error("Logout error:", error);
     } finally {
       setUser(null);
+      setUserStats(null);
       navigate("/");
     }
   };
 
+  const getUserStats = async (userId: string) => { 
+    if (!userId) {
+      console.error("No userId provided to getUserStats");
+      return;
+    }
+
+    try {
+      const response = await fetch("http://localhost:3003/api/v1/stats/profile", {
+        method: "GET",
+        credentials: "include",
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setUserStats(data.data);
+      } else {
+        throw new Error("Failed to fetch user stats");
+      }
+    } catch (error) {
+      console.error("Error fetching user stats:", error);
+    }
+  }
+
   return (
     <AuthContext.Provider
-      value={{ user, loading, login, register, logout, checkAuth }}
+      value={{ user, userStats, loading, login, register, logout, checkAuth, getUserStats }}
     >
       {children}
     </AuthContext.Provider>
