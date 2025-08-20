@@ -54,6 +54,29 @@ export interface SubmissionResponse {
   message: string;
 }
 
+export interface GuestScoreResponse {
+  success: boolean;
+  data: {
+    score: number;
+    maxScore: number;
+    similarity: number;
+    feedback: string;
+    breakdown: {
+      similarity: number;
+      bonus: number;
+      penalties: number;
+    };
+    prompt: {
+      id: string;
+      category: string;
+      difficulty: number;
+      originalPrompt: string;
+    };
+    canTransferScore: boolean;
+    sessionId: string;
+  };
+}
+
 export interface ApiError {
   error: string;
   details?: string;
@@ -281,6 +304,96 @@ export class DailyPromptsApiService {
     } catch (error) {
       console.error('Failed to fetch user stats:', error);
       throw error;
+    }
+  }
+
+  /**
+   * Submit a guest's prompt guess for scoring
+   * 
+   * This corresponds to: POST /api/v1/daily-prompts/score-guest
+   * Allows guest users to score their prompts without authentication.
+   * Score is temporarily stored in Redis for potential transfer upon registration.
+   * 
+   * @param userPrompt - The user's guess for the original prompt
+   * @param promptId - The ID of the daily prompt
+   * @param sessionId - The guest session ID for tracking
+   */
+  static async scoreGuestPrompt(
+    userPrompt: string,
+    promptId: string,
+    sessionId: string
+  ): Promise<GuestScoreResponse> {
+    try {
+      const response = await fetch(`${API_BASE_URL}/daily-prompts/score-guest`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          userPrompt: userPrompt.trim(),
+          promptId,
+          sessionId
+        })
+      });
+
+      if (!response.ok) {
+        let errorData: any;
+        try {
+          errorData = await response.json();
+        } catch {
+          errorData = { error: `HTTP ${response.status}: ${response.statusText}` };
+        }
+
+        // Log detailed error information for debugging
+        console.error('Guest scoring API error:', {
+          status: response.status,
+          error: errorData.error,
+          details: errorData.details,
+          promptId,
+          sessionId
+        });
+
+        // Handle specific error cases
+        if (response.status === 429) {
+          throw new DailyPromptsApiError({
+            error: 'Too many attempts. Please register for unlimited scoring!',
+            status: 429
+          });
+        }
+        
+        if (response.status === 400 && errorData.error?.includes('already scored today')) {
+          throw new DailyPromptsApiError({
+            error: 'You\'ve already scored today! Register to track your progress and play again tomorrow.',
+            status: 400
+          });
+        }
+
+        // Include validation details in the error message for debugging
+        const errorMessage = errorData.details && Array.isArray(errorData.details)
+          ? `${errorData.error}: ${errorData.details.join(', ')}`
+          : errorData.error || 'Failed to score prompt';
+
+        throw new DailyPromptsApiError({
+          error: errorMessage,
+          details: errorData.details,
+          status: response.status
+        });
+      }
+
+
+      const result = await response.json();
+      console.log('Guest scoring API response:', result);
+      return result;
+    } catch (error) {
+      if (error instanceof DailyPromptsApiError) {
+        throw error;
+      }
+      
+      console.error('Failed to score guest prompt:', error);
+      throw new DailyPromptsApiError({
+        error: 'Failed to score your guess. Please try again.',
+        status: 0
+      });
     }
   }
 }

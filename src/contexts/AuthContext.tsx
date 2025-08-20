@@ -19,7 +19,7 @@ interface AuthContextType {
     username: string,
     email: string,
     password: string
-  ) => Promise<void>;
+  ) => Promise<any>;
   logout: () => Promise<void>;
   checkAuth: () => Promise<void>;
   getUserStats: (userId: string) => Promise<void>;
@@ -181,13 +181,21 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     email: string,
     password: string
   ) => {
+    // Check if there's a guest session ID to transfer scores
+    const sessionId = localStorage.getItem('guestSessionId');
+    
     const response = await fetch("http://localhost:3003/api/v1/auth/register", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       credentials: "include",
-      body: JSON.stringify({ username, email, password }),
+      body: JSON.stringify({ 
+        username, 
+        email, 
+        password, 
+        sessionId // Include session ID for score transfer
+      }),
     });
 
     const data = await response.json();
@@ -196,10 +204,18 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       throw new Error(data.message || "Registration failed");
     }
 
+    // Clear guest session after successful registration
+    if (sessionId) {
+      localStorage.removeItem('guestSessionId');
+    }
+
     setUser(data.user);
     if (data.user?.id) {
       await getUserStats(data.user.id);
     }
+
+    // Return the data to handle score transfer notifications
+    return data;
   };
 
   const logout = async () => {

@@ -17,11 +17,7 @@ function App() {
             <Route index element={<Home />} />
             <Route 
               path="daily" 
-              element={
-                <ProtectedRoute>
-                  <Daily />
-                </ProtectedRoute>
-              } 
+              element={<Daily />} 
             />
             <Route path="login" element={<Login />} />
             <Route path="register" element={<Register />} />

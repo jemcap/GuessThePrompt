@@ -1,5 +1,9 @@
-// Import the actual types from the API service
-import type { DailySubmission } from "../../services/dailyPromptsApi";
+import { useState } from "react";
+import ScoreModal from "./ScoreModal";
+// Import the actual types and services from the API service
+import { DailyPromptsApiService, DailyPromptsApiError } from "../../services/dailyPromptsApi";
+import type { DailySubmission, GuestScoreResponse } from "../../services/dailyPromptsApi";
+import { getGuestSessionId } from "../../utils/guestSession";
 
 interface ScoreMessage {
   title: string;
@@ -19,6 +23,8 @@ interface UserInputSectionProps {
   challengeId: string;
   onSubmit: () => void;
   getScoreMessage: (score: number) => ScoreMessage;
+  isAuthenticated?: boolean;
+  onRegister?: () => void;
 }
 
 const UserInputSection = ({
@@ -31,7 +37,59 @@ const UserInputSection = ({
   challengeId,
   onSubmit,
   getScoreMessage,
+  isAuthenticated = false,
+  onRegister,
 }: UserInputSectionProps) => {
+  const [showScoreModal, setShowScoreModal] = useState(false);
+  const [guestScoreData, setGuestScoreData] = useState<GuestScoreResponse | null>(null);
+  const [isGuestSubmitting, setIsGuestSubmitting] = useState(false);
+  const [guestError, setGuestError] = useState<string | null>(null);
+
+  const handleSubmit = async () => {
+    if (!isAuthenticated) {
+      // For guest users, call the real guest scoring API
+      if (!userAnswer.trim()) return;
+      
+      setIsGuestSubmitting(true);
+      setGuestError(null);
+      
+      try {
+        const sessionId = getGuestSessionId();
+        const response = await DailyPromptsApiService.scoreGuestPrompt(
+          userAnswer.trim(),
+          challengeId,
+          sessionId
+        );
+        
+        setGuestScoreData(response);
+        setShowScoreModal(true);
+      } catch (error) {
+        console.error('Guest scoring error:', error);
+        
+        if (error instanceof DailyPromptsApiError) {
+          setGuestError(error.message);
+          
+          // Show registration modal for rate limiting or already scored errors
+          if (error.status === 429 || (error.status === 400 && error.message.includes('already scored'))) {
+            setShowScoreModal(true);
+          }
+        } else {
+          setGuestError('Failed to score your guess. Please try again.');
+        }
+      } finally {
+        setIsGuestSubmitting(false);
+      }
+    } else {
+      onSubmit();
+    }
+  };
+
+  const handleRegister = () => {
+    setShowScoreModal(false);
+    if (onRegister) {
+      onRegister();
+    }
+  };
   return (
     <div className="bg-gray-800 rounded-lg shadow-sm border border-gray-700">
       <div className="p-4 border-b border-gray-600">
@@ -156,22 +214,22 @@ const UserInputSection = ({
               </div>
             ) : (
               <button
-                onClick={onSubmit}
-                disabled={!userAnswer.trim() || isSubmitting}
+                onClick={handleSubmit}
+                disabled={!userAnswer.trim() || isSubmitting || isGuestSubmitting}
                 className={`px-8 py-3 rounded-xl font-medium transition-all duration-200 ${
-                  !userAnswer.trim() || isSubmitting
+                  !userAnswer.trim() || isSubmitting || isGuestSubmitting
                     ? "bg-gray-700 text-gray-500 cursor-not-allowed"
                     : "bg-blue-600 hover:bg-blue-500 text-white shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
                 }`}
               >
-                {isSubmitting ? (
+                {(isSubmitting || isGuestSubmitting) ? (
                   <div className="flex items-center gap-3">
                     <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
                     Submitting...
                   </div>
                 ) : (
                   <div className="flex items-center gap-2">
-                    <span>Submit Answer</span>
+                    <span>Submit</span>
                     <svg
                       className="w-4 h-4"
                       fill="none"
@@ -288,6 +346,30 @@ const UserInputSection = ({
             </div>
           </div>
         </div>
+      )}
+
+      {/* Error display for guest users */}
+      {guestError && !showScoreModal && (
+        <div className="p-4">
+          <div className="bg-red-900/20 border border-red-700 rounded-lg p-4">
+            <p className="text-red-300 text-sm">{guestError}</p>
+          </div>
+        </div>
+      )}
+
+      {/* Score Modal for guest users */}
+      {!isAuthenticated && showScoreModal && (
+        <ScoreModal
+          isOpen={showScoreModal}
+          onClose={() => setShowScoreModal(false)}
+          score={guestScoreData?.data.score || 0}
+          similarity={guestScoreData?.data.similarity || 0}
+          userPrompt={userAnswer}
+          originalPrompt={guestScoreData?.data.prompt.originalPrompt || originalPrompt}
+          onRegister={handleRegister}
+          feedback={guestScoreData?.data.feedback}
+          error={guestError}
+        />
       )}
     </div>
   );

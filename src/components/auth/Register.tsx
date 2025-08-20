@@ -50,7 +50,15 @@ const Register = () => {
     setLoading(true);
 
     try {
-      await registerUser(data.username, data.email, data.password);
+      const result = await registerUser(data.username, data.email, data.password);
+      
+      // Check if there was a score transfer
+      if (result?.transferredScore) {
+        // Show success message about transferred score
+        console.log('Score transferred successfully:', result.transferredScore.message);
+        // You could add a toast notification here if you have a toast library
+      }
+      
       navigate("/daily");
     } catch (err) {
       setError(err instanceof Error ? err.message : "An error occurred");

@@ -81,24 +81,26 @@ const PromptOfTheDay = () => {
 
   /**
    * Load today's prompt and user's submission status
-   * This replaces the old mock data approach with real API calls
-   * Optimized to use the combined data from your backend's single endpoint
+   * Now works for both authenticated users and guests
+   * Guests can see the prompt but won't have submission data
    */
   const loadTodaysChallenge = async () => {
-    if (!user) return;
-    
     try {
       setLoading(true);
       setError(null);
 
-      // Your backend returns both prompt and submission data in one call
-      // So we'll make one optimized request
-      const response = await fetch('http://localhost:3003/api/v1/daily-prompts/today', {
-        credentials: 'include',
+      // Make request with credentials if user is authenticated, otherwise make public request
+      const requestOptions: RequestInit = {
         headers: {
           'Content-Type': 'application/json',
         },
-      });
+      };
+
+      if (user) {
+        requestOptions.credentials = 'include';
+      }
+
+      const response = await fetch('http://localhost:3003/api/v1/daily-prompts/today', requestOptions);
 
       if (!response.ok) {
         throw new Error(`HTTP ${response.status}: ${response.statusText}`);
@@ -112,13 +114,16 @@ const PromptOfTheDay = () => {
         
         setDailyPrompt(prompt);
         
-        if (hasSubmitted && submission) {
+        // Only process submission data if user is authenticated
+        if (user && hasSubmitted && submission) {
           setSubmission(submission);
           setHasSubmitted(true);
           setUserAnswer(submission.userPrompt);
           console.log('User has already submitted:', submission);
-        } else {
+        } else if (user) {
           console.log('User can submit a new answer');
+        } else {
+          console.log('Guest user can try the prompt');
         }
       } else {
         throw new Error('Invalid response format from API');
@@ -144,7 +149,7 @@ const PromptOfTheDay = () => {
 
   /**
    * Handle user submission
-   * This now calls the real API instead of using mock localStorage
+   * Only for authenticated users - guests use the modal flow
    */
   const handleSubmit = async () => {
     if (!user || !dailyPrompt || hasSubmitted || !userAnswer.trim()) return;
@@ -184,6 +189,14 @@ const PromptOfTheDay = () => {
     } finally {
       setIsSubmitting(false);
     }
+  };
+
+  /**
+   * Handle registration redirect for guest users
+   */
+  const handleRegister = () => {
+    // Navigate to register page or show register modal
+    window.location.href = '/register';
   };
 
   // Loading state
@@ -315,6 +328,8 @@ const PromptOfTheDay = () => {
             challengeId={dailyPrompt.id}
             onSubmit={handleSubmit}
             getScoreMessage={getScoreMessage}
+            isAuthenticated={!!user}
+            onRegister={handleRegister}
           />
         </div>
       </div>
