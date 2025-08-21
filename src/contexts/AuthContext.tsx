@@ -14,7 +14,7 @@ interface AuthContextType {
   user: User | null;
   userStats: any;
   loading: boolean;
-  login: (email: string, password: string) => Promise<void>;
+  login: (email: string, password: string) => Promise<any>;
   register: (
     username: string,
     email: string,
@@ -154,26 +154,54 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   }, []);
 
   const login = async (email: string, password: string) => {
+    // Check if there's a guest session ID to transfer scores (same logic as register)
+    const sessionId = sessionStorage.getItem('guestSessionId');
+    
+    // Create request body - only include sessionId if it exists AND is valid
+    const requestBody: any = { email, password };
+    
+    // Only include sessionId if it exists and looks like a valid UUID
+    if (sessionId && sessionId.length > 10 && sessionId.includes('-')) {
+      requestBody.sessionId = sessionId;
+    }
+    
     const response = await fetch("http://localhost:3003/api/v1/auth/login", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       credentials: "include", // Include cookies for session management
-      body: JSON.stringify({ email, password }),
+      body: JSON.stringify(requestBody),
     });
 
     const data = await response.json();
-    console.log(data)
+    console.log('Login response:', data)
 
     if (!response.ok) {
       throw new Error(data.error || "Login failed");
+    }
+
+    // Handle guest session cleanup based on backend response
+    if (sessionId) {
+      // Clean up guest session in these cases:
+      // 1. Score was transferred successfully
+      // 2. User already submitted today (backend cleaned it up)
+      // 3. No guest score found (nothing to keep)
+      if (data.transferredScore || 
+          data.scoreTransferInfo?.status === 'already_submitted' ||
+          data.scoreTransferInfo?.status === 'no_guest_score') {
+        sessionStorage.removeItem('guestSessionId');
+      }
+      // Keep sessionId for 'transfer_failed' case in case user wants to try again
     }
 
     setUser(data.user);
     if (data.user?.id) {
       await getUserStats(data.user.id);
     }
+    
+    // Return the data to handle score transfer notifications
+    return data;
   };
 
   const register = async (
@@ -184,27 +212,30 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     // Check if there's a guest session ID to transfer scores
     const sessionId = localStorage.getItem('guestSessionId');
     
+    // Create request body - only include sessionId if it exists AND is valid
+    const requestBody: any = { username, email, password };
+    
+    // Only include sessionId if it exists and looks like a valid UUID
+    if (sessionId && sessionId.length > 10 && sessionId.includes('-')) {
+      requestBody.sessionId = sessionId;
+    }
+    
     const response = await fetch("http://localhost:3003/api/v1/auth/register", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       credentials: "include",
-      body: JSON.stringify({ 
-        username, 
-        email, 
-        password, 
-        sessionId // Include session ID for score transfer
-      }),
+      body: JSON.stringify(requestBody),
     });
 
     const data = await response.json();
 
     if (!response.ok) {
-      throw new Error(data.message || "Registration failed");
+      throw new Error(data.error || "Registration failed");
     }
 
-    // Clear guest session after successful registration
+    // Clear guest session after successful registration (only if it existed)
     if (sessionId) {
       localStorage.removeItem('guestSessionId');
     }

@@ -22,6 +22,16 @@ function Header() {
 
           <div className="flex items-center gap-4">
             {user && (
+              <>
+              <div className="flex items-center gap-4 mr-6">
+                <Link 
+                  to="/daily"
+                  className="text-gray-300 hover:text-blue-400 font-medium transition-colors flex items-center gap-1"
+                >
+                  Practice
+                </Link>
+                
+              </div>
               <div className="flex items-center gap-4 mr-6">
                 <Link 
                   to="/daily"
@@ -31,6 +41,7 @@ function Header() {
                 </Link>
                 
               </div>
+              </>
             )}
             {user ? (
               <div className="relative">

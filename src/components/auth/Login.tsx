@@ -18,6 +18,9 @@ const Login = () => {
   
   // Get the page user was trying to access before being redirected to login
   const from = location.state?.from?.pathname || "/daily";
+  
+  // Check if user has a guest score to transfer
+  const hasGuestScore = sessionStorage.getItem('guestSessionId');
 
   const {
     register,
@@ -30,8 +33,37 @@ const Login = () => {
     setLoading(true);
 
     try {
-      await login(data.email, data.password);
-      // Navigate to the page they were trying to access, or /play by default
+      const result = await login(data.email, data.password);
+      
+      // Handle different score transfer scenarios based on your backend response
+      if (result?.transferredScore) {
+        // Score was successfully transferred
+        console.log('🎉 Score transferred during login:', result.transferredScore);
+        // Optional: Show success message about transferred score
+        // You could add a toast notification here:
+        // toast.success(`Welcome back! Your trial score of ${result.transferredScore.score} points has been saved to your account!`);
+      } else if (result?.scoreTransferInfo) {
+        // Handle other transfer scenarios
+        const { status, message } = result.scoreTransferInfo;
+        console.log(`Score transfer status: ${status} - ${message}`);
+        
+        switch (status) {
+          case 'already_submitted':
+            // User already played today - this is normal
+            // Optional: toast.info(message);
+            break;
+          case 'no_guest_score':
+            // Normal login without guest score - this is expected
+            break;
+          case 'transfer_failed':
+            // Technical issue but login succeeded
+            console.warn('Score transfer failed but login successful');
+            // Optional: toast.warning('Login successful, but there was an issue with your trial score.');
+            break;
+        }
+      }
+      
+      // Navigate to the page they were trying to access, or /daily by default
       navigate(from, { replace: true });
     } catch (err) {
       setError(err instanceof Error ? err.message : "An error occurred");
@@ -77,6 +109,15 @@ const Login = () => {
           </p>
         </div>
         <form className="mt-8 space-y-6" onSubmit={handleSubmit(onSubmit)}>
+          {hasGuestScore && (
+            <div className="rounded-md bg-blue-900/20 border border-blue-800 p-4">
+              <div className="flex items-center">
+                <div className="text-blue-300 text-sm">
+                  🎯 You have a trial score that will be saved to your account when you log in!
+                </div>
+              </div>
+            </div>
+          )}
           {error && (
             <div className="rounded-md bg-red-900/20 border border-red-800 p-4">
               <div className="text-sm text-red-300">{error}</div>
@@ -161,7 +202,12 @@ const Login = () => {
               disabled={loading}
               className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {loading ? "Signing in..." : "Sign in"}
+              {loading 
+                ? "Signing in..." 
+                : hasGuestScore 
+                  ? "Sign in & Save Score" 
+                  : "Sign in"
+              }
             </button>
           </div>
         </form>

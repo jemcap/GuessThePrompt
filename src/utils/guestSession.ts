@@ -12,13 +12,13 @@
 export function getGuestSessionId(): string {
   const STORAGE_KEY = 'guestSessionId';
   
-  // Check if session ID already exists
-  let sessionId = localStorage.getItem(STORAGE_KEY);
+  // Check if session ID already exists in sessionStorage
+  let sessionId = sessionStorage.getItem(STORAGE_KEY);
   
   // If not, generate a new UUID
   if (!sessionId) {
     sessionId = generateUUID();
-    localStorage.setItem(STORAGE_KEY, sessionId);
+    sessionStorage.setItem(STORAGE_KEY, sessionId);
   }
   
   return sessionId;
@@ -29,14 +29,14 @@ export function getGuestSessionId(): string {
  * Called after successful registration with score transfer
  */
 export function clearGuestSessionId(): void {
-  localStorage.removeItem('guestSessionId');
+  sessionStorage.removeItem('guestSessionId');
 }
 
 /**
  * Check if a guest session exists
  */
 export function hasGuestSession(): boolean {
-  return localStorage.getItem('guestSessionId') !== null;
+  return sessionStorage.getItem('guestSessionId') !== null;
 }
 
 /**

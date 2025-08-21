@@ -199,6 +199,14 @@ const PromptOfTheDay = () => {
     window.location.href = '/register';
   };
 
+  /**
+   * Handle login redirect for guest users
+   */
+  const handleLogin = () => {
+    // Navigate to login page
+    window.location.href = '/login';
+  };
+
   // Loading state
   if (loading) {
     return (
@@ -330,6 +338,7 @@ const PromptOfTheDay = () => {
             getScoreMessage={getScoreMessage}
             isAuthenticated={!!user}
             onRegister={handleRegister}
+            onLogin={handleLogin}
           />
         </div>
       </div>

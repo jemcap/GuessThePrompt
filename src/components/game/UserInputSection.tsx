@@ -25,6 +25,7 @@ interface UserInputSectionProps {
   getScoreMessage: (score: number) => ScoreMessage;
   isAuthenticated?: boolean;
   onRegister?: () => void;
+  onLogin?: () => void;
 }
 
 const UserInputSection = ({
@@ -39,6 +40,7 @@ const UserInputSection = ({
   getScoreMessage,
   isAuthenticated = false,
   onRegister,
+  onLogin,
 }: UserInputSectionProps) => {
   const [showScoreModal, setShowScoreModal] = useState(false);
   const [guestScoreData, setGuestScoreData] = useState<GuestScoreResponse | null>(null);
@@ -88,6 +90,13 @@ const UserInputSection = ({
     setShowScoreModal(false);
     if (onRegister) {
       onRegister();
+    }
+  };
+
+  const handleLogin = () => {
+    setShowScoreModal(false);
+    if (onLogin) {
+      onLogin();
     }
   };
   return (
@@ -367,6 +376,7 @@ const UserInputSection = ({
           userPrompt={userAnswer}
           originalPrompt={guestScoreData?.data.prompt.originalPrompt || originalPrompt}
           onRegister={handleRegister}
+          onLogin={handleLogin}
           feedback={guestScoreData?.data.feedback}
           error={guestError}
         />

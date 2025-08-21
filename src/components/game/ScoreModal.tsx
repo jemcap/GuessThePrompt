@@ -17,6 +17,7 @@ interface ScoreModalProps {
   userPrompt: string;
   originalPrompt: string;
   onRegister: () => void;
+  onLogin: () => void;
   feedback?: string;
   error?: string | null;
 }
@@ -29,6 +30,7 @@ export default function ScoreModal({
   userPrompt,
   originalPrompt,
   onRegister,
+  onLogin,
   feedback,
   error,
 }: ScoreModalProps) {
@@ -185,6 +187,19 @@ export default function ScoreModal({
             <UserPlus className="w-4 h-4 mr-2" />
             Create Free Account
           </Button>
+          
+          {/* Login Section */}
+          <div className="mt-3 text-center">
+            <p className="text-sm text-gray-600 dark:text-gray-400">
+              Already have an account?{" "}
+              <button
+                onClick={onLogin}
+                className="text-purple-600 hover:text-purple-700 dark:text-purple-400 dark:hover:text-purple-300 font-medium underline underline-offset-2 hover:underline-offset-4 transition-all duration-200"
+              >
+                Log in
+              </button>
+            </p>
+          </div>
         </div>
 
         <DialogFooter>
