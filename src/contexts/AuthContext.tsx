@@ -210,7 +210,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     password: string
   ) => {
     // Check if there's a guest session ID to transfer scores
-    const sessionId = localStorage.getItem('guestSessionId');
+    const sessionId = sessionStorage.getItem('guestSessionId');
     
     // Create request body - only include sessionId if it exists AND is valid
     const requestBody: any = { username, email, password };
@@ -237,7 +237,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
     // Clear guest session after successful registration (only if it existed)
     if (sessionId) {
-      localStorage.removeItem('guestSessionId');
+      sessionStorage.removeItem('guestSessionId');
     }
 
     setUser(data.user);
