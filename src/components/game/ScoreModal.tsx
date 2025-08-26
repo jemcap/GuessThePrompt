@@ -80,15 +80,19 @@ export default function ScoreModal({
                 <ul className="space-y-2 text-sm text-gray-600 dark:text-gray-400">
                   <li className="flex items-start gap-2">
                     <span className="text-green-500 mt-0.5">✓</span>
-                    Track your progress and improve
+                    Track your progress
                   </li>
                   <li className="flex items-start gap-2">
                     <span className="text-green-500 mt-0.5">✓</span>
-                    Compete on global leaderboards
+                    Learn to prompt with structure
                   </li>
                   <li className="flex items-start gap-2">
                     <span className="text-green-500 mt-0.5">✓</span>
-                    Save your current score automatically
+                    Build a rank to showcase your skills
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-green-500 mt-0.5">✓</span>
+                    Unlock features such as Practice Mode
                   </li>
                 </ul>
               </div>
@@ -177,8 +181,8 @@ export default function ScoreModal({
           </h3>
           <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">
             {error
-              ? "Create an account to play unlimited times and save your scores!"
-              : "Create an account to save your scores, track improvements, and climb the leaderboards!"}
+              ? "Create an account to track your prompting progress and unlock new features!"
+              : "Create an account to save your scores, track improvements, and get your rank!"}
           </p>
           <Button
             onClick={onRegister}

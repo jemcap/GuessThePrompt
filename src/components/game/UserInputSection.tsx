@@ -1,8 +1,14 @@
 import { useState } from "react";
 import ScoreModal from "./ScoreModal";
 // Import the actual types and services from the API service
-import { DailyPromptsApiService, DailyPromptsApiError } from "../../services/dailyPromptsApi";
-import type { DailySubmission, GuestScoreResponse } from "../../services/dailyPromptsApi";
+import {
+  DailyPromptsApiService,
+  DailyPromptsApiError,
+} from "../../services/dailyPromptsApi";
+import type {
+  DailySubmission,
+  GuestScoreResponse,
+} from "../../services/dailyPromptsApi";
 import { getGuestSessionId } from "../../utils/guestSession";
 
 interface ScoreMessage {
@@ -43,7 +49,8 @@ const UserInputSection = ({
   onLogin,
 }: UserInputSectionProps) => {
   const [showScoreModal, setShowScoreModal] = useState(false);
-  const [guestScoreData, setGuestScoreData] = useState<GuestScoreResponse | null>(null);
+  const [guestScoreData, setGuestScoreData] =
+    useState<GuestScoreResponse | null>(null);
   const [isGuestSubmitting, setIsGuestSubmitting] = useState(false);
   const [guestError, setGuestError] = useState<string | null>(null);
 
@@ -51,10 +58,10 @@ const UserInputSection = ({
     if (!isAuthenticated) {
       // For guest users, call the real guest scoring API
       if (!userAnswer.trim()) return;
-      
+
       setIsGuestSubmitting(true);
       setGuestError(null);
-      
+
       try {
         const sessionId = getGuestSessionId();
         const response = await DailyPromptsApiService.scoreGuestPrompt(
@@ -62,21 +69,24 @@ const UserInputSection = ({
           challengeId,
           sessionId
         );
-        
+
         setGuestScoreData(response);
         setShowScoreModal(true);
       } catch (error) {
-        console.error('Guest scoring error:', error);
-        
+        console.error("Guest scoring error:", error);
+
         if (error instanceof DailyPromptsApiError) {
           setGuestError(error.message);
-          
+
           // Show registration modal for rate limiting or already scored errors
-          if (error.status === 429 || (error.status === 400 && error.message.includes('already scored'))) {
+          if (
+            error.status === 429 ||
+            (error.status === 400 && error.message.includes("already scored"))
+          ) {
             setShowScoreModal(true);
           }
         } else {
-          setGuestError('Failed to score your guess. Please try again.');
+          setGuestError("Failed to score your guess. Please try again.");
         }
       } finally {
         setIsGuestSubmitting(false);
@@ -102,9 +112,7 @@ const UserInputSection = ({
   return (
     <div className="bg-gray-800 rounded-lg shadow-sm border border-gray-700">
       <div className="p-4 border-b border-gray-600">
-        <h3 className="text-lg font-semibold text-white">
-          Your Prompt Guess:
-        </h3>
+        <h3 className="text-lg font-semibold text-white">Your Prompt Guess:</h3>
         <p className="text-sm text-gray-300 mt-1">
           {hasSubmitted
             ? "Your submitted prompt:"
@@ -151,7 +159,7 @@ const UserInputSection = ({
         {/* Notes Section */}
         {!hasSubmitted && (
           <div className="border-t border-gray-600 bg-gray-700 p-4">
-            <div className="space-y-3">
+            <div>
               <div className="flex items-center gap-2">
                 <svg
                   className="w-4 h-4 text-gray-400"
@@ -174,24 +182,30 @@ const UserInputSection = ({
                 </label>
                 <span className="text-xs text-gray-400">(Optional)</span>
               </div>
+              <div className="space-y-3">
+                <small className="text-xs text-gray-400 italic">
+                  This will not be shared with anyone and will not count towards
+                  your score.
+                </small>
 
-              <p className="text-xs text-gray-300 leading-relaxed">
-                Use this space to analyse the output, brainstorm ideas, or draft
-                your prompt before finalising above.
-              </p>
+                <p className="text-xs text-gray-300 leading-relaxed">
+                  Use this space to analyse the output, brainstorm ideas, or
+                  draft your prompt before finalising above.
+                </p>
 
-              <textarea
-                name="user-notes"
-                id="user-notes"
-                placeholder={`Jot down your thoughts...\n\n• What style or tone does this output have?\n• What specific instructions might have been given?\n• Any patterns or keywords you notice?`}
-                className={`w-full h-24 lg:h-32 px-4 py-3 border rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none transition-all duration-200 ${
-                  hasSubmitted || isSubmitting
-                    ? "bg-gray-700 text-gray-400 border-gray-600 cursor-not-allowed"
-                    : "border-gray-600 bg-gray-700 text-white hover:border-gray-500 focus:shadow-sm"
-                }`}
-                disabled={hasSubmitted || isSubmitting}
-                maxLength={1000}
-              />
+                <textarea
+                  name="user-notes"
+                  id="user-notes"
+                  placeholder={`Jot down your thoughts...\n\n• What style or tone does this output have?\n• What specific instructions might have been given?\n• Any patterns or keywords you notice?`}
+                  className={`w-full h-24 lg:h-32 px-4 py-3 border rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none transition-all duration-200 ${
+                    hasSubmitted || isSubmitting
+                      ? "bg-gray-700 text-gray-400 border-gray-600 cursor-not-allowed"
+                      : "border-gray-600 bg-gray-700 text-white hover:border-gray-500 focus:shadow-sm"
+                  }`}
+                  disabled={hasSubmitted || isSubmitting}
+                  maxLength={1000}
+                />
+              </div>
             </div>
           </div>
         )}
@@ -224,14 +238,16 @@ const UserInputSection = ({
             ) : (
               <button
                 onClick={handleSubmit}
-                disabled={!userAnswer.trim() || isSubmitting || isGuestSubmitting}
+                disabled={
+                  !userAnswer.trim() || isSubmitting || isGuestSubmitting
+                }
                 className={`px-8 py-3 rounded-xl font-medium transition-all duration-200 ${
                   !userAnswer.trim() || isSubmitting || isGuestSubmitting
                     ? "bg-gray-700 text-gray-500 cursor-not-allowed"
                     : "bg-blue-600 hover:bg-blue-500 text-white shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
                 }`}
               >
-                {(isSubmitting || isGuestSubmitting) ? (
+                {isSubmitting || isGuestSubmitting ? (
                   <div className="flex items-center gap-3">
                     <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
                     Submitting...
@@ -345,7 +361,6 @@ const UserInputSection = ({
                   ? new Date(submission.submittedAt).toLocaleString()
                   : "Unknown"}
               </span>
-
             </div>
             <div className="mt-3 pt-3 border-t border-gray-600">
               <p className="text-xs text-gray-400 text-center">
@@ -374,7 +389,9 @@ const UserInputSection = ({
           score={guestScoreData?.data.score || 0}
           similarity={guestScoreData?.data.similarity || 0}
           userPrompt={userAnswer}
-          originalPrompt={guestScoreData?.data.prompt.originalPrompt || originalPrompt}
+          originalPrompt={
+            guestScoreData?.data.prompt.originalPrompt || originalPrompt
+          }
           onRegister={handleRegister}
           onLogin={handleLogin}
           feedback={guestScoreData?.data.feedback}

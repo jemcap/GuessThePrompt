@@ -1,165 +1,63 @@
-import { useNavigate } from "react-router-dom";
+import { useRef, useState, useEffect } from "react";
+import { AnimatePresence } from "framer-motion";
+import TypewriterIntro from "../animations/TypewriterIntro";
+import { useIntro } from "../../contexts/IntroContext";
+import HeroSection from "./HeroSection";
+import ImportanceSection from "./ImportanceSection";
+import HowItWorksSection from "./HowItWorksSection";
 
 const LandingPage = () => {
-  const navigate = useNavigate();
+  const purposeSectionRef = useRef<HTMLElement>(null);
+  const { hasSeenIntro, markIntroAsSeen } = useIntro();
+  const [animationStage, setAnimationStage] = useState<"intro" | "content">(
+    hasSeenIntro ? "content" : "intro"
+  );
 
-  const scrollToHowItWorks = () => {
-    const element = document.getElementById("how-it-works");
-    element?.scrollIntoView({ behavior: "smooth" });
+  const scrollToPurpose = () => {
+    purposeSectionRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
+  const handleIntroComplete = () => {
+    markIntroAsSeen();
+    setAnimationStage("content");
+  };
+
+  // Override body background for landing page only
+  useEffect(() => {
+    // Store original background
+    const originalBackground = document.body.style.backgroundColor;
+
+    // Set transparent background to allow our gradients to show
+    document.body.style.backgroundColor = "transparent";
+
+    // Restore original background when component unmounts
+    return () => {
+      document.body.style.backgroundColor = originalBackground;
+    };
+  }, []);
+
   return (
-    <div
-      className="min-h-screen bg-gradient-to-b from-gray-900
-      to-gray-800"
-    >
-      {/* Hero Section */}
-      <section
-        className="h-[80vh] flex items-center justify-center container mx-auto px-4 py-20 
-     text-center"
-      >
-        <div className="max-w-4xl mx-auto">
-          <h1
-            className="text-5xl md:text-6xl font-bold 
-     text-white mb-6"
-          >
-            Master the Art of <span>Prompt Engineering</span>
-          </h1>
-          <p
-            className="text-xl text-gray-300 mb-8 
-     leading-relaxed"
-          >
-            GuessThePrompt is a gamified learning platform where you
-            reverse-engineer AI prompts. See an AI-generated outcome and figure
-            out the prompt that created it. Improve your prompt engineering
-            skills through interactive challenges and real-time feedback.
-          </p>
-          <div className="flex gap-4 justify-center">
-            <button
-              onClick={() => navigate("/daily")}
-              className="px-8 py-3 bg-blue-600 
-     text-white font-semibold rounded-lg hover:bg-blue-500 
-     transition-colors"
-            >
-              Start Playing
-            </button>
-            <button
-              onClick={scrollToHowItWorks}
-              className="px-8 py-3 border-2 
-     border-gray-500 text-gray-200 font-semibold rounded-lg 
-     hover:border-gray-400 hover:text-white transition-colors"
-            >
-              Learn More
-            </button>
-          </div>
-        </div>
-      </section>
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-gray-900 to-black">
+      {/* Animated Content Based on Stage */}
+      <AnimatePresence mode="wait">
+        {animationStage === "intro" && (
+          <TypewriterIntro
+            key="intro"
+            text="You are a prompting guru"
+            onComplete={handleIntroComplete}
+            delay={800}
+            speed={60}
+          />
+        )}
 
-      {/* How It Works Section */}
-      <section id="how-it-works" className="container mx-auto px-4 py-20">
-        <div className="max-w-6xl mx-auto">
-          <h2
-            className="text-4xl font-bold text-center 
-     text-white mb-4"
-          >
-            How It Works
-          </h2>
-          <p
-            className="text-lg text-gray-300 text-center 
-     mb-12 max-w-3xl mx-auto"
-          >
-            Learn by doing! Watch how GuessThePrompt helps you develop intuition
-            for crafting effective AI prompts.
-          </p>
-
-          {/* Video Container */}
-          <div
-            className="bg-gray-900 rounded-xl shadow-2xl 
-     overflow-hidden aspect-video max-w-4xl mx-auto"
-          >
-            <div
-              className="w-full h-full flex items-center 
-     justify-center bg-gradient-to-br from-gray-800 to-gray-900"
-            >
-              <div className="text-center">
-                <div
-                  className="w-20 h-20 mx-auto mb-4 
-     rounded-full bg-gray-700 flex items-center justify-center"
-                >
-                  <svg
-                    className="w-10 h-10 text-gray-400"
-                    fill="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path d="M8 5v14l11-7z" />
-                  </svg>
-                </div>
-                <p className="text-gray-400 text-lg">
-                  Video demonstration coming soon
-                </p>
-                <p className="text-gray-500 text-sm mt-2">
-                  See the app in action
-                </p>
-              </div>
-            </div>
+        {animationStage === "content" && (
+          <div key="content" className="min-h-screen relative overflow-hidden">
+            <HeroSection onLearnMoreClick={scrollToPurpose} />
+            <ImportanceSection />
+            <HowItWorksSection ref={purposeSectionRef} />
           </div>
-
-          {/* Feature Steps */}
-          <div className="grid md:grid-cols-3 gap-8 mt-16">
-            <div className="text-center">
-              <div
-                className="w-16 h-16 mx-auto mb-4 
-     bg-blue-100 rounded-full flex items-center justify-center"
-              >
-                <span
-                  className="text-2xl font-bold 
-     text-blue-600"
-                >
-                  1
-                </span>
-              </div>
-              <h3 className="text-xl font-semibold mb-2 text-white">See the Outcome</h3>
-              <p className="text-gray-300">
-                View an AI-generated text, image, or code snippet
-              </p>
-            </div>
-            <div className="text-center">
-              <div
-                className="w-16 h-16 mx-auto mb-4 
-     bg-purple-100 rounded-full flex items-center justify-center"
-              >
-                <span
-                  className="text-2xl font-bold 
-     text-purple-600"
-                >
-                  2
-                </span>
-              </div>
-              <h3 className="text-xl font-semibold mb-2 text-white">Write Your Prompt</h3>
-              <p className="text-gray-300">
-                Craft a prompt that would produce that outcome
-              </p>
-            </div>
-            <div className="text-center">
-              <div
-                className="w-16 h-16 mx-auto mb-4 
-     bg-green-100 rounded-full flex items-center justify-center"
-              >
-                <span
-                  className="text-2xl font-bold 
-     text-green-600"
-                >
-                  3
-                </span>
-              </div>
-              <h3 className="text-xl font-semibold mb-2 text-white">Get Your Score</h3>
-              <p className="text-gray-300">
-                Receive points based on similarity to the original prompt
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
+        )}
+      </AnimatePresence>
     </div>
   );
 };

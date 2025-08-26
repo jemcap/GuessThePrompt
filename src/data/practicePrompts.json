@@ -1,0 +1,389 @@
+{
+  "promptGroups": {
+    "business": {
+      "title": "Business Communication",
+      "description": "Master professional writing and business communications",
+      "color": "blue",
+      "prompts": [
+        {
+          "id": 1,
+          "title": "Project Update Email",
+          "difficulty": "beginner",
+          "output": "Subject: Project Update - Q4 Milestones\n\nDear Team,\n\nI hope this email finds you well. I wanted to provide a brief update on our Q4 project milestones:\n\n1. Development Phase: 75% complete\n2. Testing Phase: Starting next week\n3. Launch Date: On track for December 15th\n\nPlease review the attached documents and let me know if you have any questions.\n\nBest regards,\n[Your Name]",
+          "components": {
+            "role": "professional email writer",
+            "task": "write a project update email",
+            "context": "quarterly business update for team members about project milestones",
+            "reasoning": "need to communicate project status clearly and professionally to keep team informed",
+            "outputFormat": "formal business email with subject line, greeting, numbered list of updates, and professional closing",
+            "stopConditions": "email signature line"
+          }
+        },
+        {
+          "id": 2,
+          "title": "Meeting Agenda",
+          "difficulty": "intermediate",
+          "output": "Product Launch Planning Meeting\nDate: November 15, 2024 | Time: 2:00 PM EST\n\nAgenda:\n1. Opening & Objectives (5 min)\n2. Market Research Review (15 min)\n   - Competitive analysis\n   - Target audience insights\n3. Product Demo & Features (20 min)\n4. Marketing Strategy Discussion (15 min)\n   - Campaign timeline\n   - Budget allocation\n5. Risk Assessment (10 min)\n6. Action Items & Next Steps (10 min)\n\nPlease review attached market research before meeting.",
+          "components": {
+            "role": "project manager",
+            "task": "create a structured meeting agenda for product launch planning",
+            "context": "cross-functional team meeting to align on new product launch",
+            "reasoning": "structured agenda ensures productive use of meeting time",
+            "outputFormat": "meeting title, date/time, numbered agenda items with time allocations and sub-points",
+            "stopConditions": "pre-meeting preparation note"
+          }
+        },
+        {
+          "id": 3,
+          "title": "Data Analysis Summary",
+          "difficulty": "intermediate",
+          "output": "Q3 Sales Analysis Summary:\n\n• Total Revenue: $2.4M (+15% YoY)\n• Top Performing Region: Northwest (32% of total sales)\n• Customer Acquisition: 1,250 new accounts (+8% vs Q2)\n• Average Order Value: $185 (+$12 from Q2)\n• Product Mix: Software licenses (45%), Services (35%), Hardware (20%)\n\nKey Insight: Service revenue showing strongest growth trajectory at 22% QoQ.",
+          "components": {
+            "role": "business data analyst",
+            "task": "summarize quarterly sales performance metrics",
+            "context": "executive dashboard summary for leadership team review",
+            "reasoning": "executives need quick, digestible insights for decision making",
+            "outputFormat": "bullet points with title, metrics with percentages, and key insight statement",
+            "stopConditions": "key insight conclusion"
+          }
+        },
+        {
+          "id": 4,
+          "title": "Customer Review Response",
+          "difficulty": "beginner",
+          "output": "Thank you for taking the time to share your feedback, Sarah.\n\nWe sincerely apologize that your recent experience didn't meet expectations. Your concern about the delayed shipping has been escalated to our fulfillment team for immediate review.\n\nAs a gesture of goodwill, we've credited your account with a 20% discount for your next purchase. Additionally, we're implementing new tracking systems to prevent similar delays.\n\nPlease reach out directly at support@company.com or call 1-800-555-0100 if you'd like to discuss this further. We value your business and hope to restore your confidence in our service.\n\nBest regards,\nCustomer Success Team",
+          "components": {
+            "role": "customer service representative",
+            "task": "respond to a negative customer review about shipping delays",
+            "context": "public review response on e-commerce platform",
+            "reasoning": "professional responses can retain customers and demonstrate commitment to service",
+            "outputFormat": "personalized response with acknowledgment, apology, solution, and contact information",
+            "stopConditions": "team signature"
+          }
+        },
+        {
+          "id": 5,
+          "title": "Financial Report Summary",
+          "difficulty": "advanced",
+          "output": "PORTFOLIO PERFORMANCE SUMMARY\nPeriod: Q3 2024\n\nOverall Performance:\n• Portfolio Value: $1,247,500 (+12.3% QTD)\n• Benchmark (S&P 500): +9.8% QTD\n• Alpha Generated: +2.5%\n\nAsset Allocation:\n- Equities: 65% ($810,875)\n- Fixed Income: 25% ($311,875)\n- Alternatives: 8% ($99,800)\n- Cash: 2% ($24,950)\n\nTop Contributors:\n1. NVDA: +34.2% (+$45,000)\n2. MSFT: +18.5% (+$28,500)\n3. High-Yield Bonds: +8.3% (+$12,000)\n\nRisk Metrics:\n- Sharpe Ratio: 1.42\n- Max Drawdown: -4.8%\n- Beta: 0.87",
+          "components": {
+            "role": "financial analyst",
+            "task": "create a quarterly portfolio performance report",
+            "context": "investment management report for high-net-worth client review",
+            "reasoning": "clients need clear performance metrics to make informed investment decisions",
+            "outputFormat": "structured report with performance summary, allocations, contributors, and risk metrics",
+            "stopConditions": "beta metric"
+          }
+        }
+      ]
+    },
+    "technical": {
+      "title": "Technical Documentation",
+      "description": "Learn to document code, APIs, and technical processes",
+      "color": "green",
+      "prompts": [
+        {
+          "id": 6,
+          "title": "Code Documentation",
+          "difficulty": "beginner",
+          "output": "/**\n * Calculates the factorial of a given number\n * @param {number} n - The input number (must be non-negative)\n * @returns {number} The factorial of n\n * @throws {Error} If n is negative\n * @example\n * factorial(5) // returns 120\n * factorial(0) // returns 1\n */",
+          "components": {
+            "role": "technical documentation writer",
+            "task": "write JSDoc documentation for a factorial function",
+            "context": "JavaScript function that needs clear documentation for other developers",
+            "reasoning": "proper documentation helps team members understand function purpose and usage",
+            "outputFormat": "JSDoc comment block with description, parameters, return value, errors, and examples",
+            "stopConditions": "closing comment marker"
+          }
+        },
+        {
+          "id": 7,
+          "title": "API Documentation",
+          "difficulty": "intermediate",
+          "output": "## POST /api/users/register\n\nCreate a new user account.\n\n### Request Body\n```json\n{\n  \"email\": \"string (required)\",\n  \"password\": \"string (min 8 chars, required)\",\n  \"username\": \"string (3-20 chars, required)\",\n  \"termsAccepted\": \"boolean (required)\"\n}\n```\n\n### Response\n**Success (201):**\n```json\n{\n  \"id\": \"uuid\",\n  \"email\": \"user@example.com\",\n  \"username\": \"johndoe\",\n  \"createdAt\": \"2024-11-12T10:30:00Z\"\n}\n```\n\n**Error (400):**\n```json\n{\n  \"error\": \"Validation failed\",\n  \"details\": [\"Email already exists\"]\n}\n```",
+          "components": {
+            "role": "API documentation specialist",
+            "task": "document a user registration API endpoint",
+            "context": "REST API documentation for developers integrating with the platform",
+            "reasoning": "clear API docs reduce integration time and support requests",
+            "outputFormat": "markdown with endpoint, request/response examples, and status codes",
+            "stopConditions": "error response example"
+          }
+        },
+        {
+          "id": 8,
+          "title": "Bug Report",
+          "difficulty": "advanced",
+          "output": "BUG REPORT #4521\n\nTitle: Payment Gateway Timeout on High-Traffic Days\n\nSeverity: High\nEnvironment: Production\nReported: 2024-11-10\n\nDescription:\nPayment processing fails with 504 Gateway Timeout when concurrent transactions exceed 500/minute.\n\nSteps to Reproduce:\n1. Navigate to checkout page\n2. Submit payment during peak hours (2-4 PM EST)\n3. Observe timeout after 30 seconds\n\nExpected: Payment processes within 5 seconds\nActual: Gateway timeout error displayed\n\nImpact: ~15% of transactions failing during peak hours\n\nSuggested Fix: Implement connection pooling and increase timeout threshold",
+          "components": {
+            "role": "QA engineer",
+            "task": "document a critical payment gateway bug",
+            "context": "bug tracking system for development team to prioritize and fix issues",
+            "reasoning": "detailed bug reports help developers quickly identify and resolve issues",
+            "outputFormat": "structured bug report with title, metadata, description, reproduction steps, expected/actual behavior, impact, and suggested fix",
+            "stopConditions": "suggested fix section"
+          }
+        },
+        {
+          "id": 9,
+          "title": "Tutorial Introduction",
+          "difficulty": "intermediate",
+          "output": "Welcome to Python Web Scraping 101!\n\nIn this tutorial, you'll learn how to:\n• Set up Beautiful Soup and Requests libraries\n• Parse HTML content from websites\n• Extract specific data using CSS selectors\n• Handle common scraping challenges\n• Store scraped data in CSV format\n\nPrerequisites:\n- Basic Python knowledge (variables, loops, functions)\n- Python 3.8+ installed\n- Text editor or IDE\n\nBy the end of this 30-minute tutorial, you'll have built your first web scraper!\n\nLet's get started →",
+          "components": {
+            "role": "technical educator",
+            "task": "write an engaging tutorial introduction for web scraping",
+            "context": "beginner-friendly programming tutorial for online learning platform",
+            "reasoning": "clear introduction sets expectations and motivates learners",
+            "outputFormat": "welcome message, learning objectives list, prerequisites, time estimate, and motivational closing",
+            "stopConditions": "call to action to begin"
+          }
+        },
+        {
+          "id": 10,
+          "title": "Error Message",
+          "difficulty": "advanced",
+          "output": "Error: Unable to Process Request\n\nWe encountered an issue while saving your changes.\n\nError Code: DB_CONN_LOST\nTimestamp: 2024-11-12 14:32:18 UTC\n\nWhat happened?\nThe connection to our database was temporarily interrupted. Your data has been preserved but not saved.\n\nWhat you can do:\n1. Click 'Retry' to attempt saving again\n2. Copy your work to clipboard as backup\n3. If problem persists, contact support (Error Reference: #DB_CONN_LOST_45892)\n\nWe apologize for the inconvenience.",
+          "components": {
+            "role": "UX writer",
+            "task": "write a user-friendly error message for database connection failure",
+            "context": "web application error handling to inform users of technical issues",
+            "reasoning": "clear error messages reduce user frustration and provide actionable next steps",
+            "outputFormat": "error title, brief description, error details, explanation, numbered action steps, and apology",
+            "stopConditions": "apology statement"
+          }
+        }
+      ]
+    },
+    "marketing": {
+      "title": "Marketing & Content",
+      "description": "Create compelling marketing copy and promotional content",
+      "color": "purple",
+      "prompts": [
+        {
+          "id": 11,
+          "title": "Product Description",
+          "difficulty": "intermediate",
+          "output": "Introducing the EcoFlow Portable Solar Panel - your gateway to sustainable energy independence. This lightweight, foldable 100W panel delivers reliable power wherever adventure takes you. With IP65 weather resistance and 23% conversion efficiency, it's perfect for camping, RVs, or emergency backup. Features quick-setup kickstand, USB and DC outputs, and compatibility with most power stations. Backed by our 2-year warranty and eco-conscious manufacturing.",
+          "components": {
+            "role": "product marketing copywriter",
+            "task": "write a compelling product description for a portable solar panel",
+            "context": "e-commerce listing for outdoor enthusiasts and eco-conscious consumers",
+            "reasoning": "highlight key features and benefits to drive purchase decisions",
+            "outputFormat": "engaging paragraph with product name, key features, use cases, and warranty information",
+            "stopConditions": "warranty mention"
+          }
+        },
+        {
+          "id": 12,
+          "title": "Social Media Post",
+          "difficulty": "beginner",
+          "output": "🚀 Exciting news! We just launched our new AI-powered customer service chatbot, reducing response times by 80%!\n\n✅ 24/7 availability\n✅ Instant answers to common questions\n✅ Seamless handoff to human agents\n✅ Multi-language support\n\nTry it now on our website and let us know what you think! 💬\n\n#CustomerService #AI #Innovation #TechLaunch",
+          "components": {
+            "role": "social media manager",
+            "task": "announce a new AI chatbot feature on social media",
+            "context": "company product launch announcement for LinkedIn/Twitter",
+            "reasoning": "engage audience with exciting product news using visual elements",
+            "outputFormat": "emoji-rich post with headline, bullet points, call-to-action, and hashtags",
+            "stopConditions": "hashtags"
+          }
+        },
+        {
+          "id": 13,
+          "title": "Press Release",
+          "difficulty": "intermediate",
+          "output": "FOR IMMEDIATE RELEASE\n\nTechCorp Announces $50M Series B Funding to Accelerate AI Platform Expansion\n\nSAN FRANCISCO, CA - November 12, 2024 - TechCorp, a leading enterprise AI solutions provider, today announced $50 million in Series B funding led by Venture Partners, with participation from existing investors Innovation Capital and Future Fund.\n\nThe funding will accelerate product development, expand the engineering team by 40%, and support international market entry in Europe and Asia. TechCorp's platform currently serves 200+ enterprises, processing over 10 million transactions daily.\n\n\"This investment validates our vision of democratizing AI for businesses of all sizes,\" said Jane Smith, CEO of TechCorp. \"We're excited to scale our impact globally.\"\n\nAbout TechCorp: Founded in 2021, TechCorp provides no-code AI solutions for enterprise automation.\n\nContact: press@techcorp.com",
+          "components": {
+            "role": "PR specialist",
+            "task": "write a press release announcing Series B funding",
+            "context": "startup funding announcement for media distribution",
+            "reasoning": "press releases need to convey news value and company momentum to journalists",
+            "outputFormat": "standard press release with headline, dateline, lead paragraph, quotes, boilerplate, and contact",
+            "stopConditions": "contact information"
+          }
+        },
+        {
+          "id": 14,
+          "title": "Video Script",
+          "difficulty": "intermediate",
+          "output": "[SCENE: Modern office, upbeat music]\n\n[0:00-0:05]\nNARRATOR: \"Tired of spending hours on repetitive tasks?\"\n\n[0:05-0:10]\n[Show frustrated employee at desk with pile of paperwork]\n\n[0:10-0:20]\nNARRATOR: \"Introducing AutoFlow - the AI assistant that handles your busywork, so you can focus on what matters.\"\n\n[0:20-0:30]\n[Montage: Software interface, automated processes, happy employees]\n\n[0:30-0:40]\nEMPLOYEE: \"AutoFlow saved me 15 hours per week. Now I can actually strategize instead of just survive.\"\n\n[0:40-0:50]\nNARRATOR: \"Join 10,000+ companies already working smarter. Start your free trial today.\"\n\n[0:50-0:55]\n[Logo animation with website URL]\n\n[END SCREEN: \"AutoFlow.com - Work Smarter, Not Harder\"]",
+          "components": {
+            "role": "video script writer",
+            "task": "create a 60-second promotional video script for productivity software",
+            "context": "social media advertising campaign targeting office workers",
+            "reasoning": "short video ads need to quickly establish problem and solution to capture attention",
+            "outputFormat": "timestamped script with scene descriptions, narration, and visual cues",
+            "stopConditions": "end screen text"
+          }
+        },
+        {
+          "id": 15,
+          "title": "SEO Meta Description",
+          "difficulty": "beginner",
+          "output": "Learn Python programming from scratch with our comprehensive beginner's guide. Master fundamentals, practice with 50+ exercises, and build 3 real projects. Updated for Python 3.12 in 2024. Start coding today!",
+          "components": {
+            "role": "SEO specialist",
+            "task": "write a meta description for a Python tutorial website",
+            "context": "educational website targeting beginners learning Python",
+            "reasoning": "meta descriptions influence click-through rates from search results",
+            "outputFormat": "155-character description with keywords, value proposition, and call-to-action",
+            "stopConditions": "call-to-action phrase"
+          }
+        }
+      ]
+    },
+    "creative": {
+      "title": "Creative Writing",
+      "description": "Develop skills in creative content and storytelling",
+      "color": "pink",
+      "prompts": [
+        {
+          "id": 16,
+          "title": "Recipe Instructions",
+          "difficulty": "beginner",
+          "output": "Classic Margherita Pizza (Serves 4)\n\nIngredients:\n- 1 lb pizza dough\n- 1 cup marinara sauce\n- 8 oz fresh mozzarella\n- Fresh basil leaves\n- Olive oil\n- Salt\n\nInstructions:\n1. Preheat oven to 475°F\n2. Roll dough to 12-inch circle\n3. Spread sauce evenly, leaving 1-inch border\n4. Add torn mozzarella pieces\n5. Drizzle with olive oil\n6. Bake 12-15 minutes until golden\n7. Top with fresh basil before serving",
+          "components": {
+            "role": "recipe developer",
+            "task": "write a simple pizza recipe with clear instructions",
+            "context": "home cooking guide for beginners",
+            "reasoning": "clear step-by-step format helps novice cooks succeed",
+            "outputFormat": "recipe title with servings, ingredient list, numbered instructions",
+            "stopConditions": "serving instruction"
+          }
+        },
+        {
+          "id": 17,
+          "title": "Podcast Introduction",
+          "difficulty": "beginner",
+          "output": "[Upbeat intro music fades in and out]\n\nHOST: Welcome back to 'Tech Talks Daily,' the podcast where we decode the latest in technology and innovation. I'm your host, Alex Chen.\n\nToday's episode is a special one. We're diving deep into the world of quantum computing with Dr. Maria Rodriguez, who just led IBM's breakthrough in achieving quantum supremacy with their 1000-qubit processor.\n\nWe'll explore what this means for everyday technology, how it could revolutionize drug discovery, and why Dr. Rodriguez believes we're just scratching the surface of quantum possibilities.\n\nBut first, a quick thank you to our sponsors, CloudBase and DataStream, for making this episode possible.\n\nSo grab your coffee, settle in, and let's quantum leap into today's conversation.\n\n[Transition music]",
+          "components": {
+            "role": "podcast host",
+            "task": "write an engaging introduction for a tech podcast episode",
+            "context": "technology podcast featuring expert interviews",
+            "reasoning": "podcast intros need to hook listeners and set expectations for the episode",
+            "outputFormat": "scripted introduction with music cues, host intro, episode preview, and sponsor mention",
+            "stopConditions": "transition to main content"
+          }
+        },
+        {
+          "id": 18,
+          "title": "Health Article",
+          "difficulty": "intermediate",
+          "output": "5 Evidence-Based Benefits of Meditation\n\nMeditation has evolved from ancient practice to mainstream wellness tool, backed by extensive scientific research.\n\n1. **Stress Reduction**: Studies show 8 weeks of mindfulness meditation significantly reduces cortisol levels.\n\n2. **Improved Focus**: Regular practice enhances attention span and cognitive performance by up to 20%.\n\n3. **Better Sleep**: 75% of insomnia patients who began meditation were able to fall asleep within 20 minutes.\n\n4. **Lower Blood Pressure**: Meta-analysis reveals average reduction of 5 points in systolic blood pressure.\n\n5. **Emotional Regulation**: fMRI scans demonstrate increased activity in areas associated with emotional control.\n\nStart with just 10 minutes daily to experience these benefits.",
+          "components": {
+            "role": "health and wellness writer",
+            "task": "write an article about meditation benefits with scientific backing",
+            "context": "health blog targeting readers interested in evidence-based wellness practices",
+            "reasoning": "readers want credible health information supported by research",
+            "outputFormat": "article with title, introduction, numbered benefits with statistics, and actionable conclusion",
+            "stopConditions": "call to action recommendation"
+          }
+        },
+        {
+          "id": 19,
+          "title": "News Article Lead",
+          "difficulty": "intermediate",
+          "output": "SEATTLE - A breakthrough in renewable energy storage could make solar power available 24/7, as researchers at the University of Washington unveiled a new battery technology that stores energy for 30 days at 95% efficiency.\n\nThe zinc-air battery system, developed over five years by a team led by Dr. James Park, costs 80% less than current lithium-ion solutions and uses abundant, non-toxic materials.\n\n\"This changes everything for renewable energy adoption,\" said Dr. Park at yesterday's press conference. \"Communities can now store summer solar energy for winter use.\"\n\nThe technology has already attracted $100 million in venture funding and partnerships with three major utilities. Field trials begin next month in California, with commercial deployment expected by 2026.\n\nThe innovation addresses the biggest challenge facing renewable energy: intermittency.",
+          "components": {
+            "role": "news journalist",
+            "task": "write a news article lead about a renewable energy breakthrough",
+            "context": "technology news publication covering clean energy innovations",
+            "reasoning": "news leads must quickly convey the what, why, and impact of the story",
+            "outputFormat": "dateline, lead paragraph with key facts, quote, context, and significance statement",
+            "stopConditions": "problem statement"
+          }
+        },
+        {
+          "id": 20,
+          "title": "Training Manual",
+          "difficulty": "intermediate",
+          "output": "Module 3: Customer Complaint Resolution\n\nLearning Objectives:\nBy the end of this module, you will be able to:\n• Identify the 4 types of customer complaints\n• Apply the HEART method for de-escalation\n• Document issues properly in the CRM system\n\nThe HEART Method:\n\nH - Hear the customer out completely\nE - Empathize with their situation\nA - Apologize sincerely (without admitting fault)\nR - Resolve by offering solutions\nT - Thank them for their patience\n\nPractice Scenario:\nCustomer: \"I've been waiting 3 weeks for my refund!\"\n\nYour Response:\n1. Listen without interrupting\n2. \"I understand how frustrating that must be...\"\n3. \"I'm sorry you've had this experience...\"\n4. \"Let me check your account and process this immediately...\"\n5. \"Thank you for bringing this to our attention...\"\n\nRemember: Stay calm, be genuine, and focus on solutions.",
+          "components": {
+            "role": "training specialist",
+            "task": "create a training module for customer service representatives",
+            "context": "employee onboarding manual for customer support team",
+            "reasoning": "structured training materials ensure consistent service quality",
+            "outputFormat": "module title, learning objectives, method acronym with explanation, practice scenario, and key reminder",
+            "stopConditions": "final training tip"
+          }
+        }
+      ]
+    },
+    "professional": {
+      "title": "Professional Services",
+      "description": "Practice legal, academic, and specialized professional writing",
+      "color": "indigo",
+      "prompts": [
+        {
+          "id": 21,
+          "title": "Legal Contract Clause",
+          "difficulty": "advanced",
+          "output": "INTELLECTUAL PROPERTY ASSIGNMENT\n\n8.1 Work Product. Consultant acknowledges that all deliverables, inventions, discoveries, developments, innovations, improvements, know-how, designs, techniques, and works of authorship (\"Work Product\") created, conceived, or reduced to practice by Consultant in connection with the Services, whether solely or jointly with others, shall be considered \"work made for hire\" under applicable copyright law.\n\n8.2 Assignment. To the extent any Work Product is not deemed work made for hire, Consultant hereby irrevocably assigns and transfers to Company all right, title, and interest in and to such Work Product, including all intellectual property rights therein.\n\n8.3 Moral Rights. Consultant waives any moral rights in the Work Product to the fullest extent permitted by law.\n\n8.4 Further Assurances. Consultant agrees to execute any documents and take any actions reasonably requested by Company to effectuate this assignment.",
+          "components": {
+            "role": "contract attorney",
+            "task": "draft an intellectual property assignment clause for a consulting agreement",
+            "context": "independent contractor agreement for software development services",
+            "reasoning": "clear IP assignment prevents future ownership disputes",
+            "outputFormat": "clause title with numbered subsections covering work product, assignment, moral rights, and further assurances",
+            "stopConditions": "further assurances provision"
+          }
+        },
+        {
+          "id": 22,
+          "title": "Research Abstract",
+          "difficulty": "advanced",
+          "output": "Abstract\n\nThis study investigates the efficacy of transformer-based models in medical diagnosis prediction using electronic health records (EHRs). We analyzed 50,000 patient records from 2020-2024, applying BERT-based architectures fine-tuned on clinical notes.\n\nOur model achieved 94.2% accuracy in predicting diabetes onset within 2 years, outperforming traditional logistic regression (82.1%) and random forest models (87.3%). Feature importance analysis revealed medication history and lab results as primary predictors.\n\nThe model demonstrated robust performance across demographic groups, with F1 scores ranging from 0.91-0.95. These findings suggest transformer models can significantly enhance early disease detection in clinical settings.\n\nKeywords: machine learning, healthcare AI, transformers, predictive diagnostics",
+          "components": {
+            "role": "research scientist",
+            "task": "write an abstract for a medical AI research paper",
+            "context": "academic journal submission in healthcare artificial intelligence",
+            "reasoning": "abstracts must concisely convey research significance and findings",
+            "outputFormat": "structured abstract with background, methods, results, conclusion, and keywords",
+            "stopConditions": "keywords section"
+          }
+        },
+        {
+          "id": 23,
+          "title": "Grant Proposal Summary",
+          "difficulty": "advanced",
+          "output": "Project Title: AI-Driven Early Detection of Alzheimer's Disease Through Speech Pattern Analysis\n\nExecutive Summary:\n\nThis 3-year research project aims to develop a non-invasive, accessible screening tool for early-stage Alzheimer's disease using advanced natural language processing and acoustic analysis of speech patterns.\n\nOur preliminary studies indicate that subtle changes in speech complexity, pause patterns, and vocabulary usage can predict cognitive decline 5-7 years before clinical diagnosis. We propose to:\n\n1. Collect longitudinal speech data from 1,000 participants\n2. Develop deep learning models for pattern recognition\n3. Validate findings through clinical trials\n4. Create open-source diagnostic toolkit\n\nRequested funding: $2.4M will support personnel (60%), equipment (20%), data collection (15%), and dissemination (5%).\n\nExpected outcomes include peer-reviewed publications, patent applications, and a validated screening tool with 85%+ accuracy.\n\nPI: Dr. Sarah Johnson, Neuroscience Department",
+          "components": {
+            "role": "research grant writer",
+            "task": "write an executive summary for a medical AI research grant proposal",
+            "context": "NIH grant application for Alzheimer's research funding",
+            "reasoning": "grant summaries must concisely convey innovation, feasibility, and impact",
+            "outputFormat": "project title, executive summary with objectives, methods, budget breakdown, and expected outcomes",
+            "stopConditions": "principal investigator identification"
+          }
+        },
+        {
+          "id": 24,
+          "title": "Job Description",
+          "difficulty": "intermediate",
+          "output": "Senior Data Scientist - Machine Learning\n\nWe're seeking a passionate Data Scientist to join our AI team and drive innovation in predictive analytics.\n\nKey Responsibilities:\n• Develop and deploy ML models for customer behavior prediction\n• Collaborate with engineering to productionize algorithms\n• Analyze large datasets to identify actionable insights\n• Mentor junior data scientists and establish best practices\n• Present findings to stakeholders and leadership\n\nRequirements:\n• MS/PhD in Computer Science, Statistics, or related field\n• 5+ years of experience in machine learning\n• Proficiency in Python, SQL, and cloud platforms (AWS/GCP)\n• Experience with deep learning frameworks (TensorFlow/PyTorch)\n• Strong communication and problem-solving skills\n\nWe Offer:\n• Competitive salary ($150k-$200k)\n• Equity participation\n• Remote-first culture\n• Learning budget and conference attendance\n\nApply at careers.company.com/data-scientist",
+          "components": {
+            "role": "HR recruiter",
+            "task": "write a job description for a senior data scientist position",
+            "context": "tech company hiring for AI/ML team expansion",
+            "reasoning": "clear job descriptions attract qualified candidates and set proper expectations",
+            "outputFormat": "job title, overview, responsibilities list, requirements, compensation/benefits, and application link",
+            "stopConditions": "application instructions"
+          }
+        },
+        {
+          "id": 25,
+          "title": "Legal Terms Clause",
+          "difficulty": "advanced",
+          "output": "LIMITATION OF LIABILITY\n\nTo the maximum extent permitted by applicable law, in no event shall Company or its suppliers be liable for any special, incidental, indirect, or consequential damages whatsoever (including, but not limited to, damages for loss of profits, loss of data, business interruption, personal injury, or loss of privacy) arising out of or in any way related to the use of or inability to use the Service, even if Company has been advised of the possibility of such damages and even if the remedy fails of its essential purpose.\n\nSome jurisdictions do not allow the exclusion or limitation of incidental or consequential damages, so this limitation may not apply to you.",
+          "components": {
+            "role": "legal content writer",
+            "task": "draft a limitation of liability clause for terms of service",
+            "context": "software service agreement requiring legal disclaimers",
+            "reasoning": "protect company from excessive liability claims while remaining enforceable",
+            "outputFormat": "formal legal language with title, main clause, and jurisdiction disclaimer",
+            "stopConditions": "jurisdiction exception statement"
+          }
+        }
+      ]
+    }
+  }
+}
