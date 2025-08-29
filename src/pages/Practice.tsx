@@ -57,15 +57,11 @@ const Practice = () => {
   useEffect(() => {
     const checkScoringService = async () => {
       try {
-        console.log('🏥 Checking scoring service health...');
         const health = await practicePromptsApiService.checkHealth();
-        console.log('Health response:', health);
         
         setServiceReady(health.success && health?.data?.ready);
         if (!health.success || !health?.data?.ready) {
           setScoringError("Scoring service is currently unavailable. Please try again later.");
-        } else {
-          console.log('✅ Scoring service is ready!');
         }
       } catch (error) {
         console.error("❌ API health check failed:", error);
@@ -94,10 +90,6 @@ const Practice = () => {
     const correctAnswers = currentPrompt.components;
 
     try {
-      console.log('🤖 Starting AI validation...');
-      console.log('User inputs:', userInputs);
-      console.log('Expected answers:', correctAnswers);
-      
       setIsSubmitting(true);
       setScoringError(null);
 
@@ -107,22 +99,13 @@ const Practice = () => {
         expectedAnswers: correctAnswers,
       });
 
-      console.log('🎯 AI Response received:', response);
-
       if (response.success && response.data) {
-        const { totalScore, componentScores, feedback } = response.data;
+        const { totalScore, feedback } = response.data;
         
         // Update the UI with AI-calculated scores
         setScore(totalScore);
         setFeedback(feedback);
         setShowResults(true);
-        
-        // Log detailed scores for debugging
-        console.log('✅ AI Scoring Results:', {
-          totalScore,
-          componentScores,
-          feedback
-        });
       } else {
         throw new Error(response.error || 'Unknown scoring error');
       }
@@ -131,7 +114,6 @@ const Practice = () => {
       setScoringError(error instanceof Error ? error.message : 'AI scoring failed');
       
       // Fallback to keyword matching if AI fails
-      console.log('⚠️ Falling back to keyword matching...');
       fallbackValidation();
     } finally {
       setIsSubmitting(false);

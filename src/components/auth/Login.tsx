@@ -1,6 +1,7 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate, Link, useLocation } from "react-router-dom";
 import { useForm } from "react-hook-form";
+import { toast } from 'react-toastify';
 import { useAuth } from "../../contexts/AuthContext";
 
 type LoginFormData = {
@@ -12,21 +13,46 @@ type LoginFormData = {
 const Login = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { login } = useAuth();
+  const { login, forgotPassword } = useAuth();
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-  
+  const [forgotPasswordLoading, setForgotPasswordLoading] = useState(false);
+  const [forgotPasswordSent, setForgotPasswordSent] = useState(false);
+
   // Get the page user was trying to access before being redirected to login
   const from = location.state?.from?.pathname || "/daily";
-  
+
   // Check if user has a guest score to transfer
-  const hasGuestScore = sessionStorage.getItem('guestSessionId');
+  const hasGuestScore = sessionStorage.getItem("guestSessionId");
 
   const {
     register,
     handleSubmit,
+    getValues,
     formState: { errors },
   } = useForm<LoginFormData>();
+
+  // Show guest score transfer notification
+  useEffect(() => {
+    if (hasGuestScore) {
+      toast.info("You have a trial score! Log in to save it to your account permanently.", {
+        position: "top-center",
+        autoClose: 8000,
+        toastId: "guest-score-info", // Prevent duplicate toasts
+      });
+    }
+  }, [hasGuestScore]);
+
+  // Show message from reset password page if any
+  useEffect(() => {
+    if (location.state?.message) {
+      toast.success(location.state.message, {
+        position: "top-center",
+        autoClose: 6000,
+        toastId: "reset-password-success",
+      });
+    }
+  }, [location.state?.message]);
 
   const onSubmit = async (data: LoginFormData) => {
     setError("");
@@ -34,61 +60,121 @@ const Login = () => {
 
     try {
       const result = await login(data.email, data.password);
-      
+
+      // Show success toast for login
+      toast.success("Welcome back! Login successful.", {
+        position: "top-center",
+        autoClose: 3000,
+      });
+
       // Handle different score transfer scenarios based on your backend response
       if (result?.transferredScore) {
         // Score was successfully transferred
-        console.log('🎉 Score transferred during login:', result.transferredScore);
-        // Optional: Show success message about transferred score
-        // You could add a toast notification here:
-        // toast.success(`Welcome back! Your trial score of ${result.transferredScore.score} points has been saved to your account!`);
+        // Show success message about transferred score
+        toast.success(
+          `🎉 Great! Your trial score of ${result.transferredScore.score} points has been saved to your account!`,
+          {
+            position: "top-center",
+            autoClose: 5000,
+          }
+        );
       } else if (result?.scoreTransferInfo) {
         // Handle other transfer scenarios
         const { status, message } = result.scoreTransferInfo;
-        console.log(`Score transfer status: ${status} - ${message}`);
-        
+
         switch (status) {
-          case 'already_submitted':
+          case "already_submitted":
             // User already played today - this is normal
-            // Optional: toast.info(message);
+            toast.info(message || "You've already submitted your daily guess today!", {
+              position: "top-center",
+              autoClose: 4000,
+            });
             break;
-          case 'no_guest_score':
+          case "no_guest_score":
             // Normal login without guest score - this is expected
             break;
-          case 'transfer_failed':
+          case "transfer_failed":
             // Technical issue but login succeeded
-            console.warn('Score transfer failed but login successful');
-            // Optional: toast.warning('Login successful, but there was an issue with your trial score.');
+            console.warn("Score transfer failed but login successful");
+            toast.warning(
+              'Login successful, but there was an issue transferring your trial score. Please contact support if needed.',
+              {
+                position: "top-center",
+                autoClose: 6000,
+              }
+            );
             break;
         }
       }
-      
+
       // Navigate to the page they were trying to access, or /daily by default
       navigate(from, { replace: true });
     } catch (err) {
-      setError(err instanceof Error ? err.message : "An error occurred");
+      const errorMessage = err instanceof Error ? err.message : "An error occurred";
+      setError(errorMessage);
+      // Show error toast
+      toast.error(errorMessage, {
+        position: "top-center",
+        autoClose: 5000,
+      });
     } finally {
       setLoading(false);
     }
   };
 
+  const handleForgotPassword = async () => {
+    const email = getValues("email");
+    
+    if (!email) {
+      const errorMessage = "Please enter your email address first";
+      setError(errorMessage);
+      toast.error(errorMessage, {
+        position: "top-center",
+        autoClose: 4000,
+      });
+      return;
+    }
+
+    setError("");
+    setForgotPasswordLoading(true);
+
+    try {
+      await forgotPassword(email);
+      setForgotPasswordSent(true);
+      // Show success message
+      toast.success(`Password reset email sent to ${email}. Please check your inbox.`, {
+        position: "top-center",
+        autoClose: 6000,
+      });
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : "Failed to send password reset email";
+      setError(errorMessage);
+      toast.error(errorMessage, {
+        position: "top-center",
+        autoClose: 5000,
+      });
+    } finally {
+      setForgotPasswordLoading(false);
+    }
+  };
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-gray-900 to-gray-800 py-12 px-4 sm:px-6 lg:px-8 relative">
-      <Link 
-        to="/" 
+      <Link
+        to="/"
         className="absolute top-4 left-4 flex items-center gap-2 text-gray-300 hover:text-white transition-colors"
       >
-        <svg 
-          className="w-5 h-5" 
-          fill="none" 
-          stroke="currentColor" 
+        <svg
+          className="w-5 h-5"
+          fill="none"
+          stroke="currentColor"
           viewBox="0 0 24 24"
         >
-          <path 
-            strokeLinecap="round" 
-            strokeLinejoin="round" 
-            strokeWidth={2} 
-            d="M10 19l-7-7m0 0l7-7m-7 7h18" 
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M10 19l-7-7m0 0l7-7m-7 7h18"
           />
         </svg>
         <span className="font-medium">Back to Home</span>
@@ -96,7 +182,7 @@ const Login = () => {
       <div className="max-w-md w-full space-y-8">
         <div>
           <h2 className="mt-6 text-center text-3xl font-extrabold text-white">
-            Sign in to your account
+            Log in to your account
           </h2>
           <p className="mt-2 text-center text-sm text-gray-300">
             Or{" "}
@@ -109,12 +195,10 @@ const Login = () => {
           </p>
         </div>
         <form className="mt-8 space-y-6" onSubmit={handleSubmit(onSubmit)}>
-          {hasGuestScore && (
-            <div className="rounded-md bg-blue-900/20 border border-blue-800 p-4">
-              <div className="flex items-center">
-                <div className="text-blue-300 text-sm">
-                  🎯 You have a trial score that will be saved to your account when you log in!
-                </div>
+          {forgotPasswordSent && (
+            <div className="rounded-md bg-green-900/20 border border-green-800 p-4">
+              <div className="text-sm text-green-300">
+                Password reset email sent! Please check your inbox and follow the instructions.
               </div>
             </div>
           )}
@@ -143,7 +227,9 @@ const Login = () => {
                 })}
               />
               {errors.email && (
-                <p className="mt-1 text-xs text-red-400">{errors.email.message}</p>
+                <p className="mt-1 text-xs text-red-400">
+                  {errors.email.message}
+                </p>
               )}
             </div>
             <div>
@@ -165,7 +251,9 @@ const Login = () => {
                 })}
               />
               {errors.password && (
-                <p className="mt-1 text-xs text-red-400">{errors.password.message}</p>
+                <p className="mt-1 text-xs text-red-400">
+                  {errors.password.message}
+                </p>
               )}
             </div>
           </div>
@@ -187,12 +275,14 @@ const Login = () => {
             </div>
 
             <div className="text-sm">
-              <a
-                href="#"
-                className="font-medium text-blue-400 hover:text-blue-300"
+              <button 
+                type="button"
+                onClick={handleForgotPassword}
+                disabled={forgotPasswordLoading}
+                className="font-medium text-blue-400 hover:text-blue-300 disabled:opacity-50"
               >
-                Forgot your password?
-              </a>
+                {forgotPasswordLoading ? "Sending..." : "Forgot your password?"}
+              </button>
             </div>
           </div>
 
@@ -202,12 +292,11 @@ const Login = () => {
               disabled={loading}
               className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {loading 
-                ? "Signing in..." 
-                : hasGuestScore 
-                  ? "Sign in & Save Score" 
-                  : "Sign in"
-              }
+              {loading
+                ? "Logging in..."
+                : hasGuestScore
+                ? "Log in & Save Score"
+                : "Log in"}
             </button>
           </div>
         </form>

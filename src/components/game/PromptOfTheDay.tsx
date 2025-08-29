@@ -100,14 +100,13 @@ const PromptOfTheDay = () => {
         requestOptions.credentials = 'include';
       }
 
-      const response = await fetch('http://localhost:3003/api/v1/daily-prompts/today', requestOptions);
+      const response = await fetch('https://guessthepromptbackend-production-52ac.up.railway.app/api/v1/daily-prompts/today', requestOptions);
 
       if (!response.ok) {
         throw new Error(`HTTP ${response.status}: ${response.statusText}`);
       }
 
       const data = await response.json();
-      console.log('Full API response:', data);
 
       if (data.success && data.data) {
         const { prompt, hasSubmitted, submission } = data.data;
@@ -119,11 +118,10 @@ const PromptOfTheDay = () => {
           setSubmission(submission);
           setHasSubmitted(true);
           setUserAnswer(submission.userPrompt);
-          console.log('User has already submitted:', submission);
         } else if (user) {
-          console.log('User can submit a new answer');
+          // User can submit a new answer
         } else {
-          console.log('Guest user can try the prompt');
+          // Guest user can try the prompt
         }
       } else {
         throw new Error('Invalid response format from API');
@@ -166,12 +164,6 @@ const PromptOfTheDay = () => {
       // Update component state with the real submission data
       setSubmission(response.submission);
       setHasSubmitted(true);
-
-      console.log('Submission successful:', {
-        score: response.submission.score,
-        breakdown: response.scoreBreakdown,
-        message: response.message
-      });
 
       // Automatically refresh the page after a short delay to show the score
       setTimeout(() => {

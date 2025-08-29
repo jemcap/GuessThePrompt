@@ -23,6 +23,8 @@ interface AuthContextType {
   logout: () => Promise<void>;
   checkAuth: () => Promise<void>;
   getUserStats: (userId: string) => Promise<void>;
+  forgotPassword: (email: string) => Promise<any>;
+  resetPassword: (token: string, password: string) => Promise<any>;
 }
 
 export const AuthContext = createContext<AuthContextType | undefined>(
@@ -100,7 +102,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   // };
 
   const refreshTokens = async () => {
-    const response = await fetch("http://localhost:3003/api/v1/auth/refresh", {
+    const response = await fetch("https://guessthepromptbackend-production-52ac.up.railway.app/api/v1/auth/refresh", {
       method: "POST",
       credentials: "include",
     });
@@ -120,7 +122,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   // Check if user is authenticated on mount and when auth state changes
   const checkAuth = async () => {
     try {
-      const response = await fetch("http://localhost:3003/api/v1/auth/verify", {
+      const response = await fetch("https://guessthepromptbackend-production-52ac.up.railway.app/api/v1/auth/verify", {
         method: "GET",
         credentials: "include",
       });
@@ -165,7 +167,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       requestBody.sessionId = sessionId;
     }
     
-    const response = await fetch("http://localhost:3003/api/v1/auth/login", {
+    const response = await fetch("https://guessthepromptbackend-production-52ac.up.railway.app/api/v1/auth/login", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -175,7 +177,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     });
 
     const data = await response.json();
-    console.log('Login response:', data)
 
     if (!response.ok) {
       throw new Error(data.error || "Login failed");
@@ -220,7 +221,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       requestBody.sessionId = sessionId;
     }
     
-    const response = await fetch("http://localhost:3003/api/v1/auth/register", {
+    const response = await fetch("https://guessthepromptbackend-production-52ac.up.railway.app/api/v1/auth/register", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -251,7 +252,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   const logout = async () => {
     try {
-      await fetch("http://localhost:3003/api/v1/auth/logout", {
+      await fetch("https://guessthepromptbackend-production-52ac.up.railway.app/api/v1/auth/logout", {
         method: "POST",
         credentials: "include",
       });
@@ -271,7 +272,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     }
 
     try {
-      const response = await fetch("http://localhost:3003/api/v1/stats/profile", {
+      const response = await fetch("https://guessthepromptbackend-production-52ac.up.railway.app/api/v1/stats/profile", {
         method: "GET",
         credentials: "include",
       });
@@ -287,9 +288,59 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     }
   }
 
+  const forgotPassword = async (email: string) => {
+    try {
+      const response = await fetch("https://guessthepromptbackend-production-52ac.up.railway.app/api/v1/auth/forgot-password", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+        body: JSON.stringify({ email }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to send password reset email");
+      }
+
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      console.error("Error sending password reset email:", error);
+      throw error;
+    }
+  };
+
+  const resetPassword = async (token: string, password: string) => {
+    try {
+      const response = await fetch("https://guessthepromptbackend-production-52ac.up.railway.app/api/v1/auth/reset-password", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+        body: JSON.stringify({ token, password }),
+      });
+
+      if (!response.ok) {
+        // Get the actual error response from backend
+        const errorData = await response.json().catch(() => ({}));
+        
+        const errorMessage = errorData.message || errorData.error || `HTTP ${response.status}: Failed to reset password`;
+        throw new Error(errorMessage);
+      }
+
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      console.error("Error resetting password:", error);
+      throw error;
+    }
+  };
+
   return (
     <AuthContext.Provider
-      value={{ user, userStats, loading, login, register, logout, checkAuth, getUserStats }}
+      value={{ user, userStats, loading, login, register, logout, checkAuth, getUserStats, forgotPassword, resetPassword }}
     >
       {children}
     </AuthContext.Provider>

@@ -18,7 +18,6 @@ import { MdOutlineGrass } from "react-icons/md";
 
 const Profile = () => {
   const { user, userStats } = useAuth();
-  console.log("stats:", userStats);
 
   if (!user) {
     return (

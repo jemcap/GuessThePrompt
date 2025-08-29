@@ -12,7 +12,7 @@
  */
 
 // API Configuration
-const API_BASE_URL = 'http://localhost:3003/api/v1';
+const API_BASE_URL = 'https://guessthepromptbackend-production-52ac.up.railway.app/api/v1';
 
 // TypeScript interfaces matching the backend schema
 export interface DailyPrompt {
@@ -121,7 +121,6 @@ async function apiRequest<T>(
       let errorData: ApiError;
       try {
         errorData = await response.json();
-        console.log('API Error:', errorData);
       } catch {
         // If response isn't JSON, create a generic error
         errorData = {
@@ -173,7 +172,6 @@ export class DailyPromptsApiService {
         }
       }>('/daily-prompts/today');
       
-      console.log('Raw API response:', response);
       return response.data.prompt;
     } catch (error) {
       console.error('Failed to fetch today\'s prompt:', error);
@@ -199,8 +197,6 @@ export class DailyPromptsApiService {
           userPrompt,
         }),
       });
-      
-      console.log('Raw API response in submitGuess:', response);
       
       // Transform backend response to match frontend expectations
       // Backend returns: { success, data: { submission, scoreDetails, ... } }
@@ -382,7 +378,6 @@ export class DailyPromptsApiService {
 
 
       const result = await response.json();
-      console.log('Guest scoring API response:', result);
       return result;
     } catch (error) {
       if (error instanceof DailyPromptsApiError) {

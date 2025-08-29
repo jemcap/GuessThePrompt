@@ -130,7 +130,7 @@ class GuestSessionManager {
    */
   private async checkServerSession(): Promise<string | null> {
     try {
-      const response = await fetch('http://localhost:3003/api/v1/guest/session', {
+      const response = await fetch('https://guessthepromptbackend-production-52ac.up.railway.app/api/v1/guest/session', {
         method: 'GET',
         credentials: 'include',
       });
@@ -151,7 +151,7 @@ class GuestSessionManager {
    * Create new session on server
    */
   private async createServerSession(): Promise<string> {
-    const response = await fetch('http://localhost:3003/api/v1/guest/session', {
+    const response = await fetch('https://guessthepromptbackend-production-52ac.up.railway.app/api/v1/guest/session', {
       method: 'POST',
       credentials: 'include',
       headers: {
@@ -171,7 +171,7 @@ class GuestSessionManager {
    * Delete session on server
    */
   private async deleteServerSession(): Promise<void> {
-    await fetch('http://localhost:3003/api/v1/guest/session', {
+    await fetch('https://guessthepromptbackend-production-52ac.up.railway.app/api/v1/guest/session', {
       method: 'DELETE',
       credentials: 'include',
     });

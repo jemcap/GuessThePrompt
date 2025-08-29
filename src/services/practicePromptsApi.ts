@@ -36,7 +36,7 @@ interface ScoringResponse {
   error?: string;
 }
 
-const API_BASE_URL = "http://localhost:3003/api/v1";
+const API_BASE_URL = "https://guessthepromptbackend-production-52ac.up.railway.app/api/v1";
 
 class PracticePromptsApiService {
   private apiBaseUrl: string;
@@ -57,8 +57,6 @@ class PracticePromptsApiService {
 
   async evaluateAnswers(request: ScoringRequest): Promise<ScoringResponse> {
     try {
-      console.log('Calling evaluateAnswers with:', request); // Debug log
-      
       const response = await fetch(`${this.apiBaseUrl}/evaluate`, {
         method: "POST",
         headers: {
@@ -68,7 +66,6 @@ class PracticePromptsApiService {
       });
       
       const data = await response.json();
-      console.log('API Response:', data); // Debug log
       
       if (!response.ok) {
         throw new Error(data.error || "Evaluation failed");

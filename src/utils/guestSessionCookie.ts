@@ -11,7 +11,7 @@
  */
 export async function initializeGuestSession(): Promise<string> {
   try {
-    const response = await fetch('http://localhost:3003/api/v1/guest/session', {
+    const response = await fetch('https://guessthepromptbackend-production-52ac.up.railway.app/api/v1/guest/session', {
       method: 'POST',
       credentials: 'include', // Include cookies
       headers: {
@@ -36,7 +36,7 @@ export async function initializeGuestSession(): Promise<string> {
  */
 export async function hasGuestSession(): Promise<boolean> {
   try {
-    const response = await fetch('http://localhost:3003/api/v1/guest/session/check', {
+    const response = await fetch('https://guessthepromptbackend-production-52ac.up.railway.app/api/v1/guest/session/check', {
       method: 'GET',
       credentials: 'include',
     });
@@ -53,7 +53,7 @@ export async function hasGuestSession(): Promise<boolean> {
  */
 export async function clearGuestSession(): Promise<void> {
   try {
-    await fetch('http://localhost:3003/api/v1/guest/session', {
+    await fetch('https://guessthepromptbackend-production-52ac.up.railway.app/api/v1/guest/session', {
       method: 'DELETE',
       credentials: 'include',
     });
@@ -68,7 +68,7 @@ export async function clearGuestSession(): Promise<void> {
  */
 export async function getGuestSessionId(): Promise<string | null> {
   try {
-    const response = await fetch('http://localhost:3003/api/v1/guest/session', {
+    const response = await fetch('https://guessthepromptbackend-production-52ac.up.railway.app/api/v1/guest/session', {
       method: 'GET',
       credentials: 'include',
     });

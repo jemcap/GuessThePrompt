@@ -6,8 +6,6 @@ function Header() {
   const { user, userStats, logout } = useAuth();
   const navigate = useNavigate();
 
-  console.log("User Stats:", userStats);
-
   const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState<boolean>(false);
   const dropdownRef = useRef<HTMLDivElement>(null);

@@ -55,7 +55,6 @@ const Register = () => {
       // Check if there was a score transfer
       if (result?.transferredScore) {
         // Show success message about transferred score
-        console.log('Score transferred successfully:', result.transferredScore.message);
         // You could add a toast notification here if you have a toast library
       }
       

@@ -10,12 +10,6 @@ const TestUserStats = () => {
 
   useEffect(() => {
     if (user) {
-      // Log all user properties
-      console.log('=== USER OBJECT DEBUG ===');
-      console.log('Full user object:', user);
-      console.log('User keys:', Object.keys(user));
-      console.log('User values:', Object.entries(user));
-      
       // Store user info for display
       setUserInfo({
         hasId: 'id' in user,
@@ -44,9 +38,7 @@ const TestUserStats = () => {
     // Attempt 1: Try with user.id
     if ('id' in user) {
       try {
-        console.log('Attempting getUserStats with user.id:', (user as any).id);
         const result = await getUserStats((user as any).id);
-        console.log('Success with user.id! Stats:', result);
         setStats(result);
         setLoading(false);
         return;
@@ -59,9 +51,7 @@ const TestUserStats = () => {
     // Attempt 2: Try with username
     if (user.username) {
       try {
-        console.log('Attempting getUserStats with username:', user.username);
         const result = await getUserStats(user.username);
-        console.log('Success with username! Stats:', result);
         setStats(result);
         setLoading(false);
         return;
@@ -75,9 +65,7 @@ const TestUserStats = () => {
     for (const [key, value] of Object.entries(user)) {
       if ((key.toLowerCase().includes('id') || key === 'uid' || key === '_id') && value) {
         try {
-          console.log(`Attempting getUserStats with ${key}:`, value);
           const result = await getUserStats(value as any);
-          console.log(`Success with ${key}! Stats:`, result);
           setStats(result);
           setLoading(false);
           return;
