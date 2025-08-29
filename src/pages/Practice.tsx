@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import practicePromptsData from "../data/practicePrompts.json";
 import { practicePromptsApiService } from "@/services/practicePromptsApi";
-import { set } from "zod";
 
 interface PromptComponent {
   role: string;
@@ -39,7 +38,7 @@ const Practice = () => {
     stopConditions: "",
   });
   const [showResults, setShowResults] = useState(false);
-  const [score, setScore] = useState(0);
+  const [_, setScore] = useState(0);
   const [serviceReady, setServiceReady] = useState<boolean>(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [scoringError, setScoringError] = useState<string | null>(null);

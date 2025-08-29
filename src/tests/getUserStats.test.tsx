@@ -1,7 +1,6 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { renderHook, act, waitFor } from '@testing-library/react';
+import { renderHook, act } from '@testing-library/react';
 import { useAuth } from '../contexts/AuthContext';
-import React from 'react';
 
 // Mock the AuthContext
 vi.mock('../contexts/AuthContext');
@@ -38,9 +37,9 @@ describe('getUserStats functionality', () => {
 
     // Assert
     expect(result.current.user).toBeDefined();
-    expect(result.current.user.id).toBeDefined();
-    expect(result.current.user.id).toBe('test-user-123');
-    console.log('✅ User object has id:', result.current.user.id);
+    expect(result.current.user?.id).toBeDefined();
+    expect(result.current.user?.id).toBe('test-user-123');
+    console.log('✅ User object has id:', result.current.user?.id);
   });
 
   it('should call getUserStats with user.id parameter', async () => {
@@ -66,7 +65,7 @@ describe('getUserStats functionality', () => {
     
     let statsResult;
     await act(async () => {
-      statsResult = await result.current.getUserStats(result.current.user.id);
+      statsResult = await result.current.getUserStats(result.current.user!.id);
     });
 
     // Assert
@@ -110,7 +109,7 @@ describe('getUserStats functionality', () => {
     let error;
     try {
       await act(async () => {
-        await result.current.getUserStats(result.current.user.id);
+        await result.current.getUserStats(result.current.user!.id);
       });
     } catch (e) {
       error = e;
@@ -145,7 +144,7 @@ describe('getUserStats functionality', () => {
     
     let statsResult: any;
     await act(async () => {
-      statsResult = await result.current.getUserStats(result.current.user.id);
+      statsResult = await result.current.getUserStats(result.current.user!.id);
     });
 
     // Assert

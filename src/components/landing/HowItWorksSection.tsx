@@ -14,7 +14,7 @@ const cardVariants = {
   }),
 };
 
-const HowItWorksSection = forwardRef<HTMLElement>((props, ref) => {
+const HowItWorksSection = forwardRef<HTMLElement>((_, ref) => {
   const navigate = useNavigate();
 
   return (
