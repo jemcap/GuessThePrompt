@@ -47,9 +47,10 @@ function Header() {
         {/* Logo */}
         <div className="flex items-center">
           <Link to="/" onClick={() => setIsMobileMenuOpen(false)}>
-            <h1 className="text-xl font-bold text-white hover:text-blue-400 transition-colors">
+            {/* <h1 className="text-xl font-bold text-white hover:text-blue-400 transition-colors">
           GuessThePrompt
-            </h1>
+            </h1> */}
+            <img src="/guesstheprompt.png" alt="Logo" className="h-12 invert" />
           </Link>
         </div>
 
